@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Will You Go On a Date With Me?</title>
+  <style>
+    :root {
+      --bg-1: #fff1f4;
+      --bg-2: #ffd9e4;
+      --bg-3: #ffc0d0;
+      --text: #5a2436;
+      --accent: #ff4f87;
+      --accent-dark: #e53a74;
+      --accent-soft: rgba(255, 79, 135, 0.14);
+      --card: rgba(255, 255, 255, 0.72);
+      --card-border: rgba(255, 255, 255, 0.75);
+      --shadow: 0 24px 70px rgba(191, 62, 101, 0.24);
+      --radius-xl: 32px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Segoe UI", "Trebuchet MS", system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.85), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.5), transparent 28%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2) 48%, var(--bg-3));
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: auto;
+      width: 36vw;
+      height: 36vw;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.6;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      left: -10vw;
+      top: -8vw;
+      background: rgba(255, 105, 150, 0.28);
+    }
+
+    body::after {
+      right: -12vw;
+      bottom: -10vw;
+      background: rgba(255, 255, 255, 0.34);
+    }
+
+    .hearts {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .heart-float {
+      position: absolute;
+      bottom: -12vh;
+      color: rgba(255, 79, 135, 0.22);
+      font-size: var(--size);
+      animation: floatUp linear infinite;
+      text-shadow: 0 0 18px rgba(255, 79, 135, 0.12);
+      user-select: none;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) translateX(0) rotate(0deg) scale(0.8);
+        opacity: 0;
+      }
+      12% {
+        opacity: 1;
+      }
+      50% {
+        transform: translateY(-50vh) translateX(24px) rotate(12deg) scale(1);
+      }
+      100% {
+        transform: translateY(-120vh) translateX(-16px) rotate(-16deg) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    .page {
+      position: relative;
+      z-index: 2;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .hero {
+      width: min(1180px, 100%);
+      display: grid;
+      gap: clamp(20px, 3vw, 36px);
+      padding: clamp(28px, 4vw, 48px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-xl);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      animation: cardIn 900ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+    }
+
+    .hero-layout {
+      width: 100%;
+      display: grid;
+      gap: clamp(20px, 3vw, 36px);
+      align-items: center;
+      grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
+    }
+
+    .hero-copy {
+      display: grid;
+      justify-items: center;
+      gap: 22px;
+      text-align: center;
+    }
+
+    .hero-visual {
+      display: grid;
+      justify-items: center;
+    }
+
+    @keyframes cardIn {
+      from {
+        transform: translateY(28px) scale(0.98);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--accent-dark);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      box-shadow: 0 10px 26px rgba(255, 79, 135, 0.1);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 12ch;
+      font-size: clamp(2.5rem, 6vw, 5.3rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      text-wrap: balance;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 52ch;
+      font-size: clamp(1rem, 2.3vw, 1.2rem);
+      line-height: 1.7;
+      color: rgba(90, 36, 54, 0.82);
+    }
+
+    .photo-card {
+      width: min(420px, 100%);
+      padding: 14px;
+      border-radius: 32px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 232, 239, 0.9));
+      border: 1px solid rgba(255, 164, 190, 0.3);
+      box-shadow: 0 18px 42px rgba(191, 62, 101, 0.16);
+    }
+
+    .photo-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      object-position: center 18%;
+      border-radius: 24px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    }
+
+    .photo-caption {
+      margin-top: 12px;
+      display: grid;
+      gap: 4px;
+      text-align: center;
+      color: rgba(90, 36, 54, 0.8);
+    }
+
+    .photo-caption strong {
+      font-size: 1rem;
+      color: var(--accent-dark);
+    }
+
+    .photo-caption span {
+      font-size: 0.92rem;
+    }
+
+    .button-row {
+      width: min(560px, 100%);
+      min-height: 74px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      padding: 10px 0 6px;
+    }
+
+    .btn {
+      border: none;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+      border-radius: 999px;
+      padding: 16px 26px;
+      min-width: 160px;
+      box-shadow: 0 14px 28px rgba(229, 58, 116, 0.2);
+      transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        background 180ms ease,
+        opacity 180ms ease;
+      will-change: transform, top, left;
+      touch-action: manipulation;
+    }
+
+    .btn:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .yes-btn {
+      background: linear-gradient(135deg, #ff5f93, #ff3e78);
+      color: white;
+    }
+
+    .yes-btn:hover {
+      box-shadow: 0 18px 34px rgba(229, 58, 116, 0.3);
+      transform: translateY(-2px) scale(1.02);
+    }
+
+    .no-btn {
+      position: relative;
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--accent-dark);
+      border: 1px solid rgba(229, 58, 116, 0.18);
+    }
+
+    .no-btn.is-floating {
+      position: fixed;
+      z-index: 25;
+      margin: 0;
+      transition: top 160ms ease, left 160ms ease, transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .footer-note {
+      font-size: 0.92rem;
+      color: rgba(90, 36, 54, 0.64);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(40, 8, 18, 0.48);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 240ms ease;
+      z-index: 20;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      width: min(920px, calc(100vw - 32px));
+      max-height: calc(100vh - 32px);
+      border-radius: 30px;
+      padding: clamp(24px, 4vw, 38px);
+      background:
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.98), rgba(255, 239, 245, 0.98)),
+        linear-gradient(135deg, #fff, #ffe8ef);
+      box-shadow: 0 28px 90px rgba(70, 10, 28, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      transform: translateY(20px) scale(0.96);
+      opacity: 0;
+      transition: transform 240ms ease, opacity 240ms ease;
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+    }
+
+    .modal-backdrop.open .modal {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .modal::before {
+      content: "";
+      position: absolute;
+      inset: -30% -10% auto auto;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 99, 144, 0.16), transparent 70%);
+      pointer-events: none;
+    }
+
+    .modal-top {
+      display: grid;
+      justify-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .heart-orbit {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(255, 229, 236, 0.92));
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 16px 30px rgba(255, 79, 135, 0.18);
+    }
+
+    .heart-orbit span {
+      font-size: 2.6rem;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    .heart-orbit::before,
+    .heart-orbit::after {
+      content: "";
+      position: absolute;
+      inset: -12px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 79, 135, 0.14);
+      animation: orbit 2.4s linear infinite;
+    }
+
+    .heart-orbit::after {
+      inset: -22px;
+      animation-duration: 3.2s;
+      animation-direction: reverse;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.14);
+      }
+    }
+
+    @keyframes orbit {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .modal h2 {
+      margin: 0;
+      font-size: clamp(1.7rem, 4vw, 2.4rem);
+      text-align: center;
+    }
+
+    .modal p {
+      margin: 0;
+      text-align: center;
+      color: rgba(90, 36, 54, 0.78);
+      line-height: 1.6;
+    }
+
+    .form-shell {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(255, 164, 190, 0.32);
+    }
+
+    .food-menu {
+      margin-bottom: 20px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .food-filters {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .food-filter {
+      border: 1px solid rgba(255, 79, 135, 0.18);
+      background: rgba(255, 255, 255, 0.84);
+      color: var(--accent-dark);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 160ms ease, background 160ms ease, color 160ms ease, box-shadow 160ms ease;
+      min-width: auto;
+      box-shadow: none;
+    }
+
+    .food-filter:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(191, 62, 101, 0.12);
+    }
+
+    .food-filter.active {
+      background: linear-gradient(135deg, #ff5f93, #ff3e78);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 14px 26px rgba(229, 58, 116, 0.24);
+    }
+
+    .food-menu-header {
+      display: grid;
+      gap: 6px;
+      text-align: center;
+    }
+
+    .food-menu-header h3 {
+      margin: 0;
+      font-size: clamp(1.15rem, 2.6vw, 1.45rem);
+      color: var(--accent-dark);
+    }
+
+    .food-menu-header p {
+      margin: 0;
+      color: rgba(90, 36, 54, 0.72);
+      line-height: 1.5;
+    }
+
+    .food-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .food-card {
+      appearance: none;
+      -webkit-appearance: none;
+      border: 1px solid rgba(255, 164, 190, 0.26);
+      padding: 0;
+      text-align: left;
+      overflow: hidden;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 12px 30px rgba(191, 62, 101, 0.12);
+      display: grid;
+      cursor: pointer;
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+      outline: none;
+      position: relative;
+    }
+
+    .food-card:hover,
+    .food-card:focus-visible {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 34px rgba(191, 62, 101, 0.18);
+      border-color: rgba(255, 79, 135, 0.4);
+    }
+
+    .food-card.is-selected {
+      border-color: rgba(255, 79, 135, 0.82);
+      box-shadow: 0 20px 38px rgba(255, 79, 135, 0.24);
+      transform: translateY(-2px) scale(1.01);
+    }
+
+    .food-card.is-selected::after {
+      content: "Selected";
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 79, 135, 0.92);
+      color: white;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      box-shadow: 0 10px 18px rgba(229, 58, 116, 0.24);
+    }
+
+    .food-card img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      display: block;
+    }
+
+    .food-card figcaption {
+      padding: 12px 14px 14px;
+      display: grid;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .food-card strong {
+      color: var(--accent-dark);
+      font-size: 0.98rem;
+    }
+
+    .food-card span {
+      font-size: 0.9rem;
+      color: rgba(90, 36, 54, 0.72);
+      line-height: 1.4;
+    }
+
+    .food-menu-note {
+      text-align: center;
+      font-size: 0.9rem;
+      color: rgba(90, 36, 54, 0.66);
+    }
+
+    @media (max-width: 980px) {
+      .modal {
+        width: min(860px, calc(100vw - 24px));
+      }
+
+      .food-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .field-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: rgba(90, 36, 54, 0.82);
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid rgba(255, 120, 160, 0.24);
+      background: rgba(255, 255, 255, 0.94);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 14px 15px;
+      font: inherit;
+      outline: none;
+      transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    }
+
+    input:focus {
+      border-color: rgba(255, 79, 135, 0.64);
+      box-shadow: 0 0 0 4px rgba(255, 79, 135, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .submit-btn {
+      justify-self: center;
+      min-width: 200px;
+      margin-top: 4px;
+      background: linear-gradient(135deg, #ff7ca8, #ff4f87);
+      color: white;
+    }
+
+    .success-message {
+      display: none;
+      margin-top: 18px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255, 104, 148, 0.15), rgba(255, 255, 255, 0.88));
+      color: var(--accent-dark);
+      font-weight: 800;
+      text-align: center;
+      border: 1px solid rgba(255, 79, 135, 0.18);
+      animation: fadeUp 360ms ease;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      from {
+        transform: translateY(10px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .sparkle {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .sparkle span {
+      position: absolute;
+      font-size: 1rem;
+      color: rgba(255, 79, 135, 0.28);
+      animation: twinkle 2.8s ease-in-out infinite;
+    }
+
+    @keyframes twinkle {
+      0%, 100% {
+        transform: scale(0.8) rotate(0deg);
+        opacity: 0.3;
+      }
+      50% {
+        transform: scale(1.2) rotate(18deg);
+        opacity: 1;
+      }
+    }
+
+    .heart-burst {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 30;
+      width: 1px;
+      height: 1px;
+    }
+
+    .heart-burst i {
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-style: normal;
+      font-size: 1.6rem;
+      color: #ff4f87;
+      opacity: 0;
+      animation: burst 1.15s ease-out forwards;
+      text-shadow: 0 0 12px rgba(255, 79, 135, 0.18);
+    }
+
+    @keyframes burst {
+      0% {
+        transform: translate(0, 0) scale(0.4);
+        opacity: 0;
+      }
+      18% {
+        opacity: 1;
+      }
+      100% {
+        transform: translate(var(--x), var(--y)) scale(1.08);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body {
+        overflow-y: auto;
+      }
+
+      .hero {
+        gap: 22px;
+        padding: 24px;
+      }
+
+      .hero-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .photo-card {
+        width: min(100%, 420px);
+      }
+
+      .button-row {
+        min-height: 120px;
+      }
+
+      .btn {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .field-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .food-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modal {
+        width: calc(100vw - 20px);
+        max-width: 100%;
+        max-height: calc(100vh - 20px);
+        padding: 18px;
+      }
+
+      .food-filters {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+      }
+
+      .food-filters::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts" id="hearts" aria-hidden="true"></div>
+
+  <main class="page">
+    <section class="hero" aria-label="Romantic invitation">
+      <div class="hero-layout">
+        <div class="hero-copy">
+          <div class="badge">💌 Especially for Cindy Pearl Gonzaga</div>
+          <h1>Will You Go On a Date With Me?</h1>
+          <p class="subtitle">Cindy Pearl Gonzaga, I made this little page with lots of care. There is only one right answer, but I promise it comes with cute surprises.</p>
+
+          <div class="button-row" id="buttonRow">
+            <button class="btn yes-btn" id="yesBtn">Yes ❤️</button>
+            <button class="btn no-btn" id="noBtn" type="button">No 😢</button>
+          </div>
+
+          <div class="footer-note">Move your cursor near the No button if you dare.</div>
+        </div>
+
+        <div class="hero-visual">
+          <figure class="photo-card" aria-label="Cindy Pearl Gonzaga photo">
+            <img src="img/D1.jpg" alt="Cindy Pearl Gonzaga in a lavender dress standing in a floral backdrop" />
+            <figcaption class="photo-caption">
+              <strong>Cindy Pearl Gonzaga</strong>
+              <span>My pretty favorite photo on this page</span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="sparkle" aria-hidden="true" id="sparkles"></div>
+      <div class="modal-top">
+        <div class="heart-orbit"><span>💖</span></div>
+        <h2 id="modalTitle">Yay! I'm so happy! ❤️</h2>
+        <p>Let’s plan something sweet together. Pick a date, a time, and a lovely place for us to meet.</p>
+      </div>
+
+      <div class="form-shell">
+        <section class="food-menu" aria-label="Food ideas for the date">
+          <div class="food-menu-header">
+            <h3>Her little date menu</h3>
+            <p>Mga pagkaon nga bagay sa inyong sweet nga date.</p>
+          </div>
+
+          <div class="food-filters" role="tablist" aria-label="Food categories">
+            <button class="food-filter active" type="button" data-filter="all">All</button>
+            <button class="food-filter" type="button" data-filter="food">Food</button>
+            <button class="food-filter" type="button" data-filter="drinks">Drinks</button>
+            <button class="food-filter" type="button" data-filter="snacks">Snacks</button>
+            <button class="food-filter" type="button" data-filter="desserts">Desserts</button>
+          </div>
+
+          <div class="food-grid" id="foodGrid" aria-live="polite"></div>
+
+          <div class="food-menu-note">You can pick the date after choosing the snacks and drinks she likes most.</div>
+        </section>
+
+        <form id="dateForm">
+          <div class="field-grid">
+            <div class="field">
+              <label for="date">Date picker</label>
+              <input id="date" name="date" type="date" required />
+            </div>
+            <div class="field">
+              <label for="time">Time picker</label>
+              <input id="time" name="time" type="time" required />
+            </div>
+            <div class="field">
+              <label for="location">Location input</label>
+              <input id="location" name="location" type="text" placeholder="Your favorite cozy spot" required />
+            </div>
+          </div>
+          <button class="btn submit-btn" type="submit">Submit Plan</button>
+        </form>
+        <div class="success-message" id="successMessage">Our date has been scheduled! ❤️</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const buttonRow = document.getElementById('buttonRow');
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const dateForm = document.getElementById('dateForm');
+    const successMessage = document.getElementById('successMessage');
+    const hearts = document.getElementById('hearts');
+    const sparkles = document.getElementById('sparkles');
+    const foodFilterButtons = Array.from(document.querySelectorAll('.food-filter'));
+    const foodGrid = document.getElementById('foodGrid');
+
+    const menuItems = [
+      { id: 'food-1', category: 'food', title: 'Spicy Rice Cake Bowl', description: 'Warm, rich, and perfect for a cozy date.', image: 'img/FoodMeals/Fd1.jpg', alt: 'Spicy rice cake bowl with egg and sesame seeds' },
+      { id: 'food-2', category: 'food', title: 'Savory Street Noodles', description: 'A comforting plate for a slow and sweet dinner.', image: 'img/FoodMeals/Fd2.jpg', alt: 'A savory noodle dish from the food meals folder' },
+      { id: 'food-3', category: 'food', title: 'Honey Garlic Wings', description: 'Sweet, savory, and very shareable.', image: 'img/FoodMeals/Fd3.jpg', alt: 'Crispy chicken wings with fries and dipping sauce' },
+      { id: 'food-4', category: 'food', title: 'Loaded Comfort Platter', description: 'A hearty meal for the hungriest date night.', image: 'img/FoodMeals/Fd4.jpg', alt: 'A loaded meal with fries and sauce' },
+      { id: 'food-5', category: 'food', title: 'Cheesy Dinner Plate', description: 'Big flavor, cozy mood, perfect for sharing.', image: 'img/FoodMeals/Fd5.jpg', alt: 'A cheesy food meal with a rich topping' },
+      { id: 'drinks-1', category: 'drinks', title: 'Passion Lychee Fruit Teas', description: 'Fresh drinks for a cute and light date.', image: 'img/Drinks/Dr1.jpg', alt: 'Passion fruit and lychee drinks held together' },
+      { id: 'drinks-2', category: 'drinks', title: 'Sunrise Citrus Cooler', description: 'Bright and refreshing for a fun afternoon date.', image: 'img/Drinks/Dr2.jpg', alt: 'A bright citrus drink from the drinks folder' },
+      { id: 'drinks-3', category: 'drinks', title: 'Creamy Tea House Blend', description: 'Smooth, chill, and perfect for chatting.', image: 'img/Drinks/Dr3.jpg', alt: 'A creamy iced drink from the drinks folder' },
+      { id: 'drinks-4', category: 'drinks', title: 'Caramel Milk Tea Mood', description: 'Sweet and cozy like a soft conversation.', image: 'img/Drinks/Dr4.jpg', alt: 'A caramel milk tea from the drinks folder' },
+      { id: 'drinks-5', category: 'drinks', title: 'Mango Sunset Sipper', description: 'A fruity drink with a bright romantic vibe.', image: 'img/Drinks/Dr5.jpg', alt: 'A mango flavored iced drink' },
+      { id: 'drinks-6', category: 'drinks', title: 'Matcha Love Latte', description: 'Gentle and creamy for a sweet calm date.', image: 'img/Drinks/Dr6.jpg', alt: 'A matcha latte from the drinks folder' },
+      { id: 'drinks-7', category: 'drinks', title: 'Cinnamon Latte Hug', description: 'Warm spice with a soft cozy finish.', image: 'img/Drinks/Dr7.jpg', alt: 'A cinnamon latte drink from the drinks folder' },
+      { id: 'drinks-8', category: 'drinks', title: 'Blueberry Dream Chill', description: 'Cool and pretty with a gentle berry taste.', image: 'img/Drinks/Dr8.jpg', alt: 'A blueberry drink from the drinks folder' },
+      { id: 'drinks-9', category: 'drinks', title: 'Midnight Berry Refresher', description: 'Sweet, cool, and a little bit dreamy.', image: 'img/Drinks/Dr9.jpg', alt: 'A berry iced drink from the drinks folder' },
+      { id: 'drinks-10', category: 'drinks', title: 'Lemonade Date Duo', description: 'A fresh pair of drinks to keep things light.', image: 'img/Drinks/Dr10.jpg', alt: 'Two lemonade drinks from the drinks folder' },
+      { id: 'snacks-1', category: 'snacks', title: 'Loaded Chili Cheese Fries', description: 'Crispy, fun, and impossible to share unfairly.', image: 'img/Snacks/Sn1.jpg', alt: 'Loaded fries with cheese powder and dipping sauce' },
+      { id: 'snacks-2', category: 'snacks', title: 'Sweet Potato Crunch Fries', description: 'A golden snack for a playful date.', image: 'img/Snacks/Sn2.jpg', alt: 'A snack plate with fries from the snacks folder' },
+      { id: 'snacks-3', category: 'snacks', title: 'Crunchy Party Fries', description: 'Crunchy, salty, and very easy to love.', image: 'img/Snacks/Sn3.jpg', alt: 'Another fries snack from the snacks folder' },
+      { id: 'desserts-1', category: 'desserts', title: 'Classic Caramel Flan', description: 'Soft, smooth, and the sweetest finish.', image: 'img/Desserts/Ds1.jpg', alt: 'Caramel flan desserts lined up on trays' },
+      { id: 'desserts-2', category: 'desserts', title: 'Creamy Sweet Cup', description: 'A soft dessert with a dreamy finish.', image: 'img/Desserts/Ds2.jpg', alt: 'A dessert cup from the desserts folder' },
+      { id: 'desserts-3', category: 'desserts', title: 'Lotus Waffle Delight', description: 'Crispy, creamy, and made for sharing.', image: 'img/Desserts/Ds3.jpg', alt: 'A waffle dessert from the desserts folder' },
+      { id: 'desserts-4', category: 'desserts', title: 'Caramel Bliss Slice', description: 'A pretty little slice for a sweet moment.', image: 'img/Desserts/Ds4.jpg', alt: 'A caramel dessert slice from the desserts folder' },
+      { id: 'desserts-5', category: 'desserts', title: 'Mini Flan Stack', description: 'Tiny, glossy, and cute on the table.', image: 'img/Desserts/Ds5.jpg', alt: 'Mini flans from the desserts folder' },
+      { id: 'desserts-6', category: 'desserts', title: 'Berry Jelly Romance', description: 'Soft and fruity for a gentle dessert date.', image: 'img/Desserts/Ds6.jpg', alt: 'A berry dessert cup from the desserts folder' },
+      { id: 'desserts-7', category: 'desserts', title: 'Custard Dream Cups', description: 'Silky dessert vibes in a neat little cup.', image: 'img/Desserts/Ds7.jpg', alt: 'Custard dessert cups from the desserts folder' },
+      { id: 'desserts-8', category: 'desserts', title: 'Golden Sweet Puddings', description: 'Rich, golden, and the best sweet ending.', image: 'img/Desserts/Ds8.jpg', alt: 'Golden pudding desserts from the desserts folder' },
+    ];
+
+    let currentFoodFilter = 'all';
+    let selectedFoodId = null;
+
+    let noButtonEscaped = false;
+
+    function randomBetween(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function moveNoButton() {
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const buttonRect = noBtn.getBoundingClientRect();
+      const padding = 16;
+      const maxX = Math.max(padding, viewportWidth - buttonRect.width - padding);
+      const maxY = Math.max(padding, viewportHeight - buttonRect.height - padding);
+      const targetX = randomBetween(padding, maxX);
+      const targetY = randomBetween(padding, maxY);
+
+      noBtn.classList.add('is-floating');
+      noBtn.style.left = `${targetX}px`;
+      noBtn.style.top = `${targetY}px`;
+      noBtn.style.transform = `rotate(${randomBetween(-12, 12).toFixed(2)}deg)`;
+      noButtonEscaped = true;
+    }
+
+    function isCursorNearNoButton(clientX, clientY) {
+      const rect = noBtn.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const dx = clientX - centerX;
+      const dy = clientY - centerY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      return distance < 130;
+    }
+
+    document.addEventListener('mousemove', (event) => {
+      if (isCursorNearNoButton(event.clientX, event.clientY)) {
+        moveNoButton();
+      }
+    });
+
+    noBtn.addEventListener('mouseenter', moveNoButton);
+    noBtn.addEventListener('focus', moveNoButton);
+    noBtn.addEventListener('click', (event) => {
+      event.preventDefault();
+      moveNoButton();
+    });
+
+    yesBtn.addEventListener('click', () => {
+      modalBackdrop.classList.add('open');
+      modalBackdrop.setAttribute('aria-hidden', 'false');
+      createHeartBurst();
+      createSparkles();
+    });
+
+    function createHeartBurst() {
+      const burst = document.createElement('div');
+      burst.className = 'heart-burst';
+      const count = 16;
+      const symbols = ['💗', '💖', '💘', '❤️', '💞'];
+      for (let index = 0; index < count; index += 1) {
+        const heart = document.createElement('i');
+        heart.textContent = symbols[index % symbols.length];
+        const angle = (Math.PI * 2 * index) / count;
+        const distance = randomBetween(70, 180);
+        heart.style.setProperty('--x', `${Math.cos(angle) * distance}px`);
+        heart.style.setProperty('--y', `${Math.sin(angle) * distance}px`);
+        heart.style.animationDelay = `${index * 30}ms`;
+        burst.appendChild(heart);
+      }
+      document.body.appendChild(burst);
+      setTimeout(() => burst.remove(), 1400);
+    }
+
+    function createFloatingHearts() {
+      const symbols = ['💗', '💖', '💘', '❤️', '💕'];
+      const count = 18;
+      for (let index = 0; index < count; index += 1) {
+        const heart = document.createElement('div');
+        heart.className = 'heart-float';
+        heart.textContent = symbols[index % symbols.length];
+        heart.style.left = `${randomBetween(0, 100)}vw`;
+        heart.style.setProperty('--size', `${randomBetween(0.9, 2.1)}rem`);
+        heart.style.animationDuration = `${randomBetween(9, 16).toFixed(2)}s`;
+        heart.style.animationDelay = `${randomBetween(0, 10).toFixed(2)}s`;
+        heart.style.opacity = `${randomBetween(0.3, 0.75).toFixed(2)}`;
+        hearts.appendChild(heart);
+      }
+    }
+
+    function createSparkles() {
+      sparkles.innerHTML = '';
+      const symbols = ['✦', '✧', '✦', '⋆', '✧'];
+      for (let index = 0; index < 8; index += 1) {
+        const sparkle = document.createElement('span');
+        sparkle.textContent = symbols[index % symbols.length];
+        sparkle.style.left = `${randomBetween(4, 92)}%`;
+        sparkle.style.top = `${randomBetween(8, 86)}%`;
+        sparkle.style.animationDelay = `${randomBetween(0, 1.8).toFixed(2)}s`;
+        sparkles.appendChild(sparkle);
+      }
+    }
+
+    function renderFoodMenu(filterValue) {
+      currentFoodFilter = filterValue;
+      foodFilterButtons.forEach((button) => {
+        button.classList.toggle('active', button.dataset.filter === filterValue);
+      });
+
+      const visibleItems = menuItems.filter((item) => filterValue === 'all' || item.category === filterValue);
+      foodGrid.innerHTML = visibleItems.map((item) => `
+        <button type="button" class="food-card ${item.id === selectedFoodId ? 'is-selected' : ''}" data-category="${item.category}" data-id="${item.id}">
+          <img src="${item.image}" alt="${item.alt}" />
+          <figcaption>
+            <strong>${item.title}</strong>
+            <span>${item.description}</span>
+          </figcaption>
+        </button>
+      `).join('');
+
+      Array.from(foodGrid.querySelectorAll('.food-card')).forEach((card) => {
+        card.addEventListener('click', () => {
+          selectedFoodId = card.dataset.id || null;
+          const picked = menuItems.find((item) => item.id === selectedFoodId);
+          if (picked) {
+            selectedFoodId = picked.id;
+            document.querySelector('.food-menu-note').textContent = `Selected: ${picked.title}. Tap another card or choose the date after this.`;
+          }
+          renderFoodMenu(currentFoodFilter);
+        });
+      });
+    }
+
+    foodFilterButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        selectedFoodId = null;
+        renderFoodMenu(button.dataset.filter || 'all');
+      });
+    });
+
+    dateForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      dateForm.style.display = 'none';
+      successMessage.classList.add('show');
+      createHeartBurst();
+    });
+
+    modalBackdrop.addEventListener('click', (event) => {
+      if (event.target === modalBackdrop) {
+        modalBackdrop.classList.remove('open');
+        modalBackdrop.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (noButtonEscaped) {
+        const rect = noBtn.getBoundingClientRect();
+        const maxLeft = Math.max(16, window.innerWidth - rect.width - 16);
+        const maxTop = Math.max(16, window.innerHeight - rect.height - 16);
+        const left = Math.min(parseFloat(noBtn.style.left || '0'), maxLeft);
+        const top = Math.min(parseFloat(noBtn.style.top || '0'), maxTop);
+        noBtn.style.left = `${Math.max(16, left)}px`;
+        noBtn.style.top = `${Math.max(16, top)}px`;
+      }
+    });
+
+    renderFoodMenu('all');
+    createFloatingHearts();
+  </script>
+</body>
+</html>
