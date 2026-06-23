@@ -3,93 +3,770 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Happy Monthsary, My Loves</title>
+  <title>Happy Monthsary Love</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ============================================
+       LANDING PAGE STYLES
+       ============================================ */
+    
+    .landing-screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #fff1f4 0%, #ffd9e4 50%, #ffc0d0 100%);
+      z-index: 100;
+      opacity: 1;
+      transition: opacity 600ms ease;
+      padding: 24px;
+    }
+
+    .landing-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .landing-container {
+      display: grid;
+      place-items: center;
+      gap: 32px;
+      max-width: 500px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.92);
+      padding: clamp(32px, 6vw, 48px);
+      border-radius: 32px;
+      box-shadow: 0 28px 90px rgba(70, 10, 28, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(14px);
+      animation: slideUp 800ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+    }
+
+    .landing-hearts {
+      display: flex;
+      gap: 12px;
+      font-size: 2.4rem;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .landing-heading {
+      margin: 0;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      text-align: center;
+      background: linear-gradient(135deg, #ff5f93, #ff3e78);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      font-weight: 800;
+    }
+
+    .landing-subtitle {
+      margin: 0;
+      font-size: clamp(1rem, 2.3vw, 1.1rem);
+      color: rgba(90, 36, 54, 0.82);
+      text-align: center;
+      line-height: 1.6;
+      max-width: 28ch;
+    }
+
+    .password-form {
+      display: grid;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .password-input {
+      width: 100%;
+      padding: 14px 18px;
+      border: 2px solid rgba(255, 79, 135, 0.24);
+      background: rgba(255, 255, 255, 0.94);
+      border-radius: 16px;
+      font: inherit;
+      font-size: 1rem;
+      color: #5a2436;
+      outline: none;
+      transition: border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+    }
+
+    .password-input:focus {
+      border-color: rgba(255, 79, 135, 0.64);
+      box-shadow: 0 0 0 4px rgba(255, 79, 135, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .password-input::placeholder {
+      color: rgba(90, 36, 54, 0.48);
+    }
+
+    .open-btn {
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #ff5f93, #ff3e78);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      font: inherit;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(229, 58, 116, 0.2);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+      touch-action: manipulation;
+    }
+
+    .open-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 34px rgba(229, 58, 116, 0.3);
+    }
+
+    .open-btn:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .password-error {
+      margin: 0;
+      padding: 12px 16px;
+      background: rgba(255, 79, 135, 0.1);
+      color: #ff3e78;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 79, 135, 0.24);
+      font-size: 0.95rem;
+      text-align: center;
+      animation: shake 500ms ease;
+      display: none;
+    }
+
+    .password-error.show {
+      display: block;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(28px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes shake {
+      0%, 100% {
+        transform: translateX(0);
+      }
+      25% {
+        transform: translateX(-8px);
+      }
+      75% {
+        transform: translateX(8px);
+      }
+    }
+
+    /* ============================================
+       MAIN CONTENT STYLES
+       ============================================ */
+
+    .main-content {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 600ms ease 400ms;
+    }
+
+    .main-content.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Music player button */
+    .music-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff5f93, #ff3e78);
+      color: white;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(229, 58, 116, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 180ms ease, box-shadow 180ms ease;
+      z-index: 50;
+    }
+
+    .music-btn:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 18px 34px rgba(229, 58, 116, 0.3);
+    }
+
+    .music-btn:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    /* New sections */
+    .section {
+      margin: 60px 0;
+      padding: clamp(28px, 4vw, 48px);
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      box-shadow: 0 24px 70px rgba(191, 62, 101, 0.24);
+      backdrop-filter: blur(14px);
+      animation: fadeInUp 800ms ease both;
+    }
+
+    .section:nth-child(2) {
+      animation-delay: 100ms;
+    }
+
+    .section:nth-child(3) {
+      animation-delay: 200ms;
+    }
+
+    .section:nth-child(4) {
+      animation-delay: 300ms;
+    }
+
+    .section:nth-child(5) {
+      animation-delay: 400ms;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .section-title {
+      margin: 0 0 18px 0;
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      color: #ff3e78;
+      text-align: center;
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      margin: 0 0 24px 0;
+      font-size: clamp(0.95rem, 2vw, 1.05rem);
+      color: rgba(90, 36, 54, 0.72);
+      text-align: center;
+    }
+
+    /* Love Letter */
+    .love-letter-content {
+      padding: 24px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 245, 250, 0.95));
+      border-radius: 20px;
+      border: 2px solid rgba(255, 164, 190, 0.3);
+      line-height: 2;
+      font-size: 1.05rem;
+      color: #5a2436;
+      letter-spacing: 0.01em;
+      text-align: center;
+    }
+
+    /* Gallery */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .gallery-item {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 12px 30px rgba(191, 62, 101, 0.12);
+      aspect-ratio: 1;
+      background: rgba(255, 255, 255, 0.92);
+      cursor: pointer;
+      transition: transform 200ms ease, box-shadow 200ms ease;
+    }
+
+    .gallery-item:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 18px 40px rgba(191, 62, 101, 0.18);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 200ms ease;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.05);
+    }
+
+    .gallery-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      background: linear-gradient(135deg, rgba(255, 245, 250, 0.8), rgba(255, 232, 239, 0.8));
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      padding: 40px 20px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 100%;
+      background: linear-gradient(180deg, rgba(255, 79, 135, 0.1), rgba(255, 79, 135, 0.3), rgba(255, 79, 135, 0.1));
+      top: 0;
+    }
+
+    .timeline-item {
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .timeline-item:nth-child(odd) {
+      text-align: right;
+      padding-right: calc(50% + 20px);
+    }
+
+    .timeline-item:nth-child(even) {
+      text-align: left;
+      padding-left: calc(50% + 20px);
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 16px;
+      background: linear-gradient(135deg, #ff5f93, #ff3e78);
+      border-radius: 50%;
+      box-shadow: 0 0 0 6px rgba(255, 79, 135, 0.1);
+      top: 6px;
+    }
+
+    .timeline-content {
+      padding: 16px 20px;
+      background: rgba(255, 245, 250, 0.8);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 164, 190, 0.2);
+    }
+
+    .timeline-date {
+      font-weight: 800;
+      color: #ff3e78;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .timeline-text {
+      color: rgba(90, 36, 54, 0.78);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    /* Surprise Message */
+    .surprise-section {
+      text-align: center;
+    }
+
+    .surprise-btn {
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #ff5f93, #ff3e78);
+      color: white;
+      border: none;
+      border-radius: 999px;
+      font: inherit;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(229, 58, 116, 0.2);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+      touch-action: manipulation;
+    }
+
+    .surprise-btn:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 18px 34px rgba(229, 58, 116, 0.3);
+    }
+
+    .surprise-btn:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .surprise-message {
+      margin-top: 24px;
+      padding: 24px;
+      background: linear-gradient(135deg, rgba(255, 95, 147, 0.1), rgba(255, 62, 120, 0.05));
+      border: 2px solid rgba(255, 79, 135, 0.24);
+      border-radius: 16px;
+      color: #5a2436;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      text-align: center;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      animation: popIn 500ms cubic-bezier(0.2, 0.9, 0.2, 1);
+      display: none;
+    }
+
+    .surprise-message.show {
+      display: block;
+    }
+
+    @keyframes popIn {
+      from {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 720px) {
+      .landing-container {
+        gap: 24px;
+      }
+
+      .timeline::before {
+        left: 12px;
+      }
+
+      .timeline-item:nth-child(odd),
+      .timeline-item:nth-child(even) {
+        text-align: left;
+        padding: 0 0 0 40px;
+      }
+
+      .timeline-dot {
+        left: 0;
+      }
+
+      .music-btn {
+        bottom: 16px;
+        right: 16px;
+        width: 48px;
+        height: 48px;
+        font-size: 1.4rem;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div class="hearts" id="hearts" aria-hidden="true"></div>
+  <!-- ================================================
+       LANDING SCREEN (Password Protected)
+       ================================================ -->
+  <div class="landing-screen" id="landingScreen">
+    <div class="landing-container">
+      <div class="landing-hearts" aria-hidden="true">💕 💕 💕</div>
+      <h1 class="landing-heading">Happy Monthsary Love</h1>
+      <p class="landing-subtitle">A special page just for us. Enter the password to reveal our memories and celebrate this beautiful month together.</p>
+      
+      <form class="password-form" id="passwordForm">
+        <input 
+          type="password" 
+          class="password-input" 
+          id="passwordInput" 
+          placeholder="Enter password..."
+          autocomplete="off"
+        />
+        <button type="submit" class="open-btn">Open ❤️</button>
+      </form>
 
-  <main class="page">
-    <section class="hero" aria-label="Monthsary celebration">
-      <div class="hero-layout">
-        <div class="hero-copy">
-          <div class="badge">🌹 Our Special Month 🌹</div>
-          <h1>Happy Monthsary, My Loves</h1>
-          <p class="subtitle">Another beautiful month with you. Thank you for choosing to spend it with me. Here's to more memories, laughter, and sweet moments together in this long distance journey.</p>
+      <!-- EDIT THIS: Change the password here -->
+      <!-- Default password: "ilove1206" -->
+      <p class="password-error" id="passwordError">Wrong password love, try again ❤️</p>
+    </div>
+  </div>
 
-          <div class="button-row" id="buttonRow">
-            <button class="btn yes-btn" id="yesBtn">Celebrate With Me 💕</button>
-            <button class="btn no-btn" id="noBtn" type="button">Try Again 😄</button>
+  <div class="main-content" id="mainContent">
+    <!-- Music player button -->
+    <button class="music-btn" id="musicBtn" title="Play/Pause Music">🎵</button>
+    <!-- Hidden audio element for background music -->
+    <!-- EDIT THIS: Change the music file path here -->
+    <audio id="backgroundMusic" loop>
+      <source src="music.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+
+    <div class="page">
+      <!-- ================================================
+           HERO SECTION - Monthsary Greeting
+           ================================================ -->
+      <section class="section hero" aria-label="Monthsary celebration">
+        <div class="hero-layout">
+          <div class="hero-copy">
+            <div class="badge">🌹 Our Special Month 🌹</div>
+            <h1>Happy Monthsary, My Loves</h1>
+            <p class="subtitle">Another beautiful month with you. Thank you for choosing to spend it with me. Here's to more memories, laughter, and sweet moments together in this long distance journey.</p>
+
+            <div class="button-row" id="buttonRow">
+              <button class="btn yes-btn" id="yesBtn">Celebrate With Me 💕</button>
+              <button class="btn no-btn" id="noBtn" type="button">Try Again 😄</button>
+            </div>
+
+            <div class="footer-note">Let's plan something special for our monthsary!</div>
           </div>
 
-          <div class="footer-note">Let's plan something special for our monthsary!</div>
+          <div class="hero-visual">
+            <figure class="photo-card" aria-label="Our favorite memory">
+              <!-- EDIT THIS: Change the image path here -->
+              <img src="img/D1.jpg" alt="My beautiful love" />
+              <figcaption class="photo-caption">
+                <strong>My Beautiful Love</strong>
+                <span>Every month with you is precious</span>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================
+           LOVE LETTER SECTION
+           ================================================ -->
+      <section class="section" aria-label="Love letter">
+        <h2 class="section-title">💌 A Letter To You</h2>
+        <div class="love-letter-content" id="loveLetter">
+          <!-- EDIT THIS: Change the love letter message here -->
+          <p>My dearest,<br><br>
+          Every day with you feels like a dream I never want to wake up from. Even though distance separates us, my heart is always close to yours. Thank you for being my reason to smile, my comfort in hard times, and my greatest joy.<br><br>
+          I promise to love you more with each passing day, to be there for you through everything, and to make this distance nothing but a temporary bump in our beautiful love story.<br><br>
+          Forever yours,<br>
+          Your Love 💕</p>
+        </div>
+      </section>
+
+      <!-- ================================================
+           PHOTO GALLERY SECTION
+           ================================================ -->
+      <section class="section" aria-label="Photo gallery">
+        <h2 class="section-title">📸 Our Memories</h2>
+        <p class="section-subtitle">Moments that make us smile</p>
+        <div class="gallery-grid" id="gallery">
+          <!-- EDIT THIS: Add your photo paths here. Update the image sources in the JavaScript below -->
+          <!-- Example: <img src="img/memory1.jpg" alt="Our memory" /> -->
+          <div class="gallery-item gallery-placeholder">
+            <span>📷</span>
+          </div>
+          <div class="gallery-item gallery-placeholder">
+            <span>📷</span>
+          </div>
+          <div class="gallery-item gallery-placeholder">
+            <span>📷</span>
+          </div>
+          <div class="gallery-item gallery-placeholder">
+            <span>📷</span>
+          </div>
+        </div>
+        <p style="text-align: center; color: rgba(90, 36, 54, 0.64); margin-top: 16px; font-size: 0.95rem;">
+          💡 Tip: Replace the placeholder images with your favorite photos by editing the gallery in the HTML.
+        </p>
+      </section>
+
+      <!-- ================================================
+           TIMELINE/MEMORIES SECTION
+           ================================================ -->
+      <section class="section" aria-label="Timeline of memories">
+        <h2 class="section-title">📅 Our Journey</h2>
+        <p class="section-subtitle">Milestones that matter to us</p>
+        <div class="timeline">
+          <!-- EDIT THIS: Change the dates and memories here -->
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="timeline-date">Day We Met 💫</div>
+              <p class="timeline-text">The day everything changed. From the moment I saw you, I knew you were special.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="timeline-date">First "I Love You" 💕</div>
+              <p class="timeline-text">Three words that changed everything. Three words I'll never stop saying.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="timeline-date">First Monthsary 🌹</div>
+              <p class="timeline-text">One month of pure happiness. Here's to many more months of loving you.</p>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="timeline-date">Forever Starts Today ✨</div>
+              <p class="timeline-text">Every moment with you is a promise of forever. I can't wait for what's next.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================
+           SURPRISE MESSAGE SECTION
+           ================================================ -->
+      <section class="section surprise-section" aria-label="Surprise message">
+        <h2 class="section-title">🎁 Tap For A Surprise</h2>
+        <button class="surprise-btn" id="surpriseBtn">Reveal Surprise 💝</button>
+        <div class="surprise-message" id="surpriseMessage">
+          <!-- EDIT THIS: Change the surprise message here -->
+          <p>Thank you for being the most wonderful person in my life. 
+          You make every day brighter, and I'm so grateful for you. 
+          Let's celebrate this monthsary by making new memories that we'll treasure forever. 
+          I love you so much! 💕🌹✨</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Modal for date planning -->
+    <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="sparkle" aria-hidden="true" id="sparkles"></div>
+        <div class="modal-top">
+          <div class="heart-orbit"><span>💕</span></div>
+          <h2 id="modalTitle">I Love Celebrating Us! 💕</h2>
+          <p>Thank you for being my favorite person this past month. Let's plan something beautiful to mark our special day. Pick your favorite treats and when you'd like to celebrate.</p>
         </div>
 
-        <div class="hero-visual">
-          <figure class="photo-card" aria-label="Our favorite memory">
-            <img src="img/D1.jpg" alt="My beautiful love" />
-            <figcaption class="photo-caption">
-              <strong>My Beautiful Love</strong>
-              <span>Every month with you is precious</span>
-            </figcaption>
-          </figure>
+        <div class="form-shell">
+          <section class="food-menu" aria-label="Food ideas for monthsary celebration">
+            <div class="food-menu-header">
+              <h3>Our Monthsary Feast 🌹</h3>
+              <p>Pick the treats that make our celebration sweet.</p>
+            </div>
+
+            <div class="food-filters" role="tablist" aria-label="Food categories">
+              <button class="food-filter active" type="button" data-filter="all">All</button>
+              <button class="food-filter" type="button" data-filter="food">Food</button>
+              <button class="food-filter" type="button" data-filter="drinks">Drinks</button>
+              <button class="food-filter" type="button" data-filter="snacks">Snacks</button>
+              <button class="food-filter" type="button" data-filter="desserts">Desserts</button>
+            </div>
+
+            <div class="food-grid" id="foodGrid" aria-live="polite"></div>
+
+            <div class="food-menu-note">Pick your favorite treats, then fill in when and where we'll celebrate our monthsary.</div>
+          </section>
+
+          <form id="dateForm">
+            <div class="field-grid">
+              <div class="field">
+                <label for="date">Celebration Date</label>
+                <input id="date" name="date" type="date" required />
+              </div>
+              <div class="field">
+                <label for="time">Celebration Time</label>
+                <input id="time" name="time" type="time" required />
+              </div>
+              <div class="field">
+                <label for="location">Celebration Spot</label>
+                <input id="location" name="location" type="text" placeholder="Our cozy corner" required />
+              </div>
+            </div>
+            <button class="btn submit-btn" type="submit">Lock In Our Plan 💕</button>
+          </form>
+          <div class="success-message" id="successMessage">Our monthsary is locked in! Can't wait to celebrate with you! 💕</div>
         </div>
-      </div>
-    </section>
-  </main>
-
-  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="sparkle" aria-hidden="true" id="sparkles"></div>
-      <div class="modal-top">
-        <div class="heart-orbit"><span>💕</span></div>
-        <h2 id="modalTitle">I Love Celebrating Us! 💕</h2>
-        <p>Thank you for being my favorite person this past month. Let's plan something beautiful to mark our special day. Pick your favorite treats and when you'd like to celebrate.</p>
-      </div>
-
-      <div class="form-shell">
-        <section class="food-menu" aria-label="Food ideas for monthsary celebration">
-          <div class="food-menu-header">
-            <h3>Our Monthsary Feast 🌹</h3>
-            <p>Pick the treats that make our celebration sweet.</p>
-          </div>
-
-          <div class="food-filters" role="tablist" aria-label="Food categories">
-            <button class="food-filter active" type="button" data-filter="all">All</button>
-            <button class="food-filter" type="button" data-filter="food">Food</button>
-            <button class="food-filter" type="button" data-filter="drinks">Drinks</button>
-            <button class="food-filter" type="button" data-filter="snacks">Snacks</button>
-            <button class="food-filter" type="button" data-filter="desserts">Desserts</button>
-          </div>
-
-          <div class="food-grid" id="foodGrid" aria-live="polite"></div>
-
-          <div class="food-menu-note">Pick your favorite treats, then fill in when and where we'll celebrate our monthsary.</div>
-        </section>
-
-        <form id="dateForm">
-          <div class="field-grid">
-            <div class="field">
-              <label for="date">Celebration Date</label>
-              <input id="date" name="date" type="date" required />
-            </div>
-            <div class="field">
-              <label for="time">Celebration Time</label>
-              <input id="time" name="time" type="time" required />
-            </div>
-            <div class="field">
-              <label for="location">Celebration Spot</label>
-              <input id="location" name="location" type="text" placeholder="Our cozy corner" required />
-            </div>
-          </div>
-          <button class="btn submit-btn" type="submit">Lock In Our Plan 💕</button>
-        </form>
-        <div class="success-message" id="successMessage">Our monthsary is locked in! Can't wait to celebrate with you! 💕</div>
       </div>
     </div>
   </div>
 
+  <div class="hearts" id="hearts" aria-hidden="true"></div>
+
   <script>
+    // ================================================
+    // PASSWORD PROTECTION LOGIC
+    // ================================================
+    
+    // EDIT THIS: Change the password here
+    const CORRECT_PASSWORD = "ilove1206";
+
+    const landingScreen = document.getElementById('landingScreen');
+    const mainContent = document.getElementById('mainContent');
+    const passwordForm = document.getElementById('passwordForm');
+    const passwordInput = document.getElementById('passwordInput');
+    const passwordError = document.getElementById('passwordError');
+
+    passwordForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      if (passwordInput.value === CORRECT_PASSWORD) {
+        // Correct password - show main content
+        landingScreen.classList.add('hidden');
+        mainContent.classList.add('show');
+        passwordError.classList.remove('show');
+        passwordInput.value = '';
+      } else {
+        // Wrong password - show error with shake animation
+        passwordError.classList.add('show');
+        passwordInput.value = '';
+        setTimeout(() => passwordError.classList.remove('show'), 3000);
+      }
+    });
+
+    // ================================================
+    // MUSIC PLAYER
+    // ================================================
+
+    const musicBtn = document.getElementById('musicBtn');
+    const backgroundMusic = document.getElementById('backgroundMusic');
+    let isPlaying = false;
+
+    musicBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        backgroundMusic.pause();
+        musicBtn.textContent = '🎵';
+        isPlaying = false;
+      } else {
+        backgroundMusic.play();
+        musicBtn.textContent = '⏸️';
+        isPlaying = true;
+      }
+    });
+
+    // ================================================
+    // SURPRISE MESSAGE
+    // ================================================
+
+    const surpriseBtn = document.getElementById('surpriseBtn');
+    const surpriseMessage = document.getElementById('surpriseMessage');
+
+    surpriseBtn.addEventListener('click', () => {
+      surpriseMessage.classList.add('show');
+      surpriseBtn.disabled = true;
+      surpriseBtn.style.opacity = '0.6';
+    });
+
+    // ================================================
+    // ORIGINAL MONTHSARY PAGE FUNCTIONS
+    // ================================================
+
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
     const buttonRow = document.getElementById('buttonRow');
@@ -132,7 +809,6 @@
 
     let currentFoodFilter = 'all';
     let selectedFoodId = null;
-
     let noButtonEscaped = false;
 
     function randomBetween(min, max) {
