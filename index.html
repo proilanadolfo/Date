@@ -320,6 +320,125 @@
       background: linear-gradient(135deg, rgba(255, 245, 250, 0.8), rgba(255, 232, 239, 0.8));
     }
 
+    /* Upload Section */
+    .upload-section {
+      display: grid;
+      gap: 16px;
+      margin-top: 28px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(255, 245, 250, 0.6), rgba(255, 232, 239, 0.4));
+      border-radius: 16px;
+      border: 2px dashed rgba(255, 79, 135, 0.32);
+    }
+
+    .upload-btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #ff5f93, #ff3e78);
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 600;
+      transition: transform 200ms ease, box-shadow 200ms ease;
+      box-shadow: 0 8px 20px rgba(255, 79, 135, 0.28);
+    }
+
+    .upload-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(255, 79, 135, 0.38);
+    }
+
+    .upload-form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+    }
+
+    .drive-input {
+      padding: 12px 16px;
+      border: 2px solid rgba(255, 79, 135, 0.24);
+      background: rgba(255, 255, 255, 0.94);
+      border-radius: 10px;
+      font: inherit;
+      font-size: 0.95rem;
+      color: #5a2436;
+      outline: none;
+      transition: border-color 200ms ease, box-shadow 200ms ease;
+    }
+
+    .drive-input:focus {
+      border-color: rgba(255, 79, 135, 0.64);
+      box-shadow: 0 0 0 3px rgba(255, 79, 135, 0.12);
+    }
+
+    .drive-input::placeholder {
+      color: rgba(90, 36, 54, 0.48);
+    }
+
+    .add-image-btn {
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #4ecdc4, #44b8b0);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 200ms ease, box-shadow 200ms ease;
+      box-shadow: 0 6px 16px rgba(78, 205, 196, 0.28);
+    }
+
+    .add-image-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(78, 205, 196, 0.38);
+    }
+
+    .add-image-btn:active {
+      transform: translateY(0);
+    }
+
+    .upload-tip {
+      margin: 0;
+      font-size: 0.9rem;
+      color: rgba(90, 36, 54, 0.64);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .remove-image-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 32px;
+      height: 32px;
+      background: rgba(255, 79, 135, 0.9);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 200ms ease, background 200ms ease;
+      box-shadow: 0 4px 12px rgba(255, 79, 135, 0.32);
+    }
+
+    .gallery-item:hover .remove-image-btn {
+      opacity: 1;
+    }
+
+    .remove-image-btn:hover {
+      background: rgba(255, 79, 135, 1);
+    }
+
+    @media (max-width: 720px) {
+      .upload-form {
+        grid-template-columns: 1fr;
+      }
+    }
+
     /* Timeline */
     .timeline {
       position: relative;
@@ -576,9 +695,18 @@
             <span>📷</span>
           </div>
         </div>
-        <p style="text-align: center; color: rgba(90, 36, 54, 0.64); margin-top: 16px; font-size: 0.95rem;">
-          💡 Tip: Replace the placeholder images with your favorite photos by editing the gallery in the HTML.
-        </p>
+        
+        <!-- Upload Section -->
+        <div class="upload-section">
+          <a href="https://drive.google.com/drive/folders/11e2yNlZXG7JysvVrPDXHmngHzpYvkZIZ?usp=sharing" target="_blank" class="upload-btn">📤 Upload to Drive</a>
+          
+          <div class="upload-form">
+            <input type="text" id="driveImageUrl" class="drive-input" placeholder="Paste Drive image link here..." />
+            <button id="addImageBtn" class="add-image-btn">➕ Add Image</button>
+          </div>
+          
+          <p class="upload-tip">📌 Steps: 1) Click Upload to Drive → 2) Upload photo → 3) Right-click → Get link → Copy → 4) Paste here → 5) Click Add Image</p>
+        </div>
       </section>
 
       <!-- ================================================
@@ -706,6 +834,80 @@
       surpriseMessage.classList.add('show');
       surpriseBtn.disabled = true;
       surpriseBtn.style.opacity = '0.6';
+    });
+
+    // ================================================
+    // GALLERY IMAGE MANAGEMENT
+    // ================================================
+    const gallery = document.getElementById('gallery');
+    const driveImageUrl = document.getElementById('driveImageUrl');
+    const addImageBtn = document.getElementById('addImageBtn');
+
+    function convertDriveUrlToDirectImage(driveUrl) {
+      // Extract file ID from Google Drive URL
+      let fileId = '';
+      
+      if (driveUrl.includes('/d/')) {
+        fileId = driveUrl.split('/d/')[1].split('/')[0];
+      } else if (driveUrl.includes('id=')) {
+        fileId = driveUrl.split('id=')[1].split('&')[0];
+      }
+      
+      if (fileId) {
+        return `https://drive.google.com/uc?export=view&id=${fileId}`;
+      }
+      return driveUrl;
+    }
+
+    function removeImageFromGallery(element) {
+      element.remove();
+    }
+
+    function addImageToGallery(imageUrl) {
+      if (!imageUrl.trim()) {
+        alert('Please paste an image URL!');
+        return;
+      }
+
+      // Convert Drive URL to direct image URL
+      const directUrl = convertDriveUrlToDirectImage(imageUrl);
+
+      // Create gallery item
+      const galleryItem = document.createElement('div');
+      galleryItem.className = 'gallery-item';
+      galleryItem.style.position = 'relative';
+
+      // Create image
+      const img = document.createElement('img');
+      img.src = directUrl;
+      img.alt = 'Gallery image';
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.objectFit = 'cover';
+
+      // Create remove button
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'remove-image-btn';
+      removeBtn.innerHTML = '✕';
+      removeBtn.addEventListener('click', () => removeImageFromGallery(galleryItem));
+
+      galleryItem.appendChild(img);
+      galleryItem.appendChild(removeBtn);
+      gallery.appendChild(galleryItem);
+
+      // Clear input
+      driveImageUrl.value = '';
+      driveImageUrl.focus();
+    }
+
+    addImageBtn.addEventListener('click', () => {
+      addImageToGallery(driveImageUrl.value);
+    });
+
+    driveImageUrl.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        addImageToGallery(driveImageUrl.value);
+      }
     });
 
     // ================================================
