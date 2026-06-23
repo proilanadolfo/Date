@@ -66,7 +66,7 @@
       box-shadow: 0 14px 36px rgba(191, 62, 101, 0.1);
     }
 
-    .login, .uploader {
+    .uploader {
       display: grid;
       gap: 14px;
     }
@@ -142,17 +142,7 @@
     </section>
 
     <section class="grid">
-      <article class="card login" id="loginCard">
-        <h2>Admin Login</h2>
-        <p class="muted">Enter the admin password to unlock uploads.</p>
-        <input class="input" id="adminPassword" type="password" placeholder="Admin password" />
-        <div class="actions">
-          <button class="btn btn-primary" id="loginButton">Unlock Admin Panel</button>
-        </div>
-        <p class="status muted" id="loginStatus"></p>
-      </article>
-
-      <article class="card uploader hidden" id="uploaderCard">
+      <article class="card uploader" id="uploaderCard">
         <h2>Upload Memories</h2>
         <p class="muted">Choose one or more photos or videos, then send them to MongoDB.</p>
         <input class="input" id="mediaFiles" type="file" accept="image/*,video/*" multiple />
@@ -164,7 +154,7 @@
         <p class="status muted" id="uploadStatus">Ready to upload.</p>
       </article>
 
-      <article class="card hidden" id="queueCard">
+      <article class="card" id="queueCard">
         <h2>Recent Uploads</h2>
         <div class="queue" id="queue"></div>
       </article>
@@ -172,35 +162,16 @@
   </main>
 
   <script>
-    const ADMIN_PASSWORD = 'ilove1206';
-
-    const loginCard = document.getElementById('loginCard');
     const uploaderCard = document.getElementById('uploaderCard');
     const queueCard = document.getElementById('queueCard');
-    const adminPassword = document.getElementById('adminPassword');
-    const loginButton = document.getElementById('loginButton');
-    const loginStatus = document.getElementById('loginStatus');
     const mediaFiles = document.getElementById('mediaFiles');
     const uploadButton = document.getElementById('uploadButton');
     const refreshButton = document.getElementById('refreshButton');
     const uploadStatus = document.getElementById('uploadStatus');
     const queue = document.getElementById('queue');
 
-    function setStatus(node, message) {
-      node.textContent = message;
-    }
-
-    function unlockAdmin() {
-      if (adminPassword.value !== ADMIN_PASSWORD) {
-        setStatus(loginStatus, 'Wrong password. Try again.');
-        return;
-      }
-
-      loginCard.classList.add('hidden');
-      uploaderCard.classList.remove('hidden');
-      queueCard.classList.remove('hidden');
-      setStatus(uploadStatus, 'Admin panel unlocked.');
-      loadUploads();
+    function setStatus(message) {
+      uploadStatus.textContent = message;
     }
 
     function makeQueueItem(file) {
@@ -235,34 +206,7 @@
 
           await loadUploads();
         } catch (error) {
-          setStatus(uploadStatus, 'Could not delete that upload.');
-        }
-      });
-      right.style.gap = '10px';
-      right.appendChild(tag);
-      right.appendChild(deleteButton);
-
-      const tag = document.createElement('span');
-      tag.className = 'tag';
-      tag.textContent = file.contentType.startsWith('video/') ? 'Video' : 'Photo';
-
-      const deleteButton = document.createElement('button');
-      deleteButton.className = 'btn btn-primary';
-      deleteButton.style.padding = '10px 14px';
-      deleteButton.textContent = 'Delete';
-      deleteButton.addEventListener('click', async () => {
-        try {
-          const response = await fetch(`/api/uploads/${file.id}`, {
-            method: 'DELETE',
-          });
-
-          if (!response.ok) {
-            throw new Error('Delete failed');
-          }
-
-          await loadUploads();
-        } catch (error) {
-          setStatus(uploadStatus, 'Could not delete that upload.');
+          setStatus('Could not delete that upload.');
         }
       });
 
@@ -286,7 +230,7 @@
 
         uploads.slice(0, 10).forEach((file) => queue.appendChild(makeQueueItem(file)));
       } catch (error) {
-        setStatus(uploadStatus, 'Failed to load uploads.');
+        setStatus('Failed to load uploads.');
       }
     }
 
@@ -294,7 +238,7 @@
       const files = Array.from(mediaFiles.files || []);
 
       if (!files.length) {
-        setStatus(uploadStatus, 'Choose one or more files first.');
+        setStatus('Choose one or more files first.');
         return;
       }
 
@@ -303,7 +247,7 @@
 
       try {
         uploadButton.disabled = true;
-        setStatus(uploadStatus, 'Uploading files...');
+        setStatus('Uploading files...');
 
         const response = await fetch('/api/uploads', {
           method: 'POST',
@@ -317,23 +261,18 @@
         }
 
         mediaFiles.value = '';
-        setStatus(uploadStatus, result.message || 'Upload complete.');
+        setStatus(result.message || 'Upload complete.');
         await loadUploads();
       } catch (error) {
-        setStatus(uploadStatus, error.message || 'Upload failed.');
+        setStatus(error.message || 'Upload failed.');
       } finally {
         uploadButton.disabled = false;
       }
     }
 
-    loginButton.addEventListener('click', unlockAdmin);
-    adminPassword.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        unlockAdmin();
-      }
-    });
     uploadButton.addEventListener('click', uploadFiles);
     refreshButton.addEventListener('click', loadUploads);
+    loadUploads();
   </script>
 </body>
 </html>
