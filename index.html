@@ -523,12 +523,7 @@
             <h1>Happy Monthsary, My Loves</h1>
             <p class="subtitle">Another beautiful month with you. Thank you for choosing to spend it with me. Here's to more memories, laughter, and sweet moments together in this long distance journey.</p>
 
-            <div class="button-row" id="buttonRow">
-              <button class="btn yes-btn" id="yesBtn">Celebrate With Me 💕</button>
-              <button class="btn no-btn" id="noBtn" type="button">Try Again 😄</button>
-            </div>
-
-            <div class="footer-note">Let's plan something special for our monthsary!</div>
+            <div class="footer-note">Let's celebrate our beautiful month together! 🌹</div>
           </div>
 
           <div class="hero-visual">
@@ -644,57 +639,7 @@
       </section>
     </div>
 
-    <!-- Modal for date planning -->
-    <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
-      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-        <div class="sparkle" aria-hidden="true" id="sparkles"></div>
-        <div class="modal-top">
-          <div class="heart-orbit"><span>💕</span></div>
-          <h2 id="modalTitle">I Love Celebrating Us! 💕</h2>
-          <p>Thank you for being my favorite person this past month. Let's plan something beautiful to mark our special day. Pick your favorite treats and when you'd like to celebrate.</p>
-        </div>
 
-        <div class="form-shell">
-          <section class="food-menu" aria-label="Food ideas for monthsary celebration">
-            <div class="food-menu-header">
-              <h3>Our Monthsary Feast 🌹</h3>
-              <p>Pick the treats that make our celebration sweet.</p>
-            </div>
-
-            <div class="food-filters" role="tablist" aria-label="Food categories">
-              <button class="food-filter active" type="button" data-filter="all">All</button>
-              <button class="food-filter" type="button" data-filter="food">Food</button>
-              <button class="food-filter" type="button" data-filter="drinks">Drinks</button>
-              <button class="food-filter" type="button" data-filter="snacks">Snacks</button>
-              <button class="food-filter" type="button" data-filter="desserts">Desserts</button>
-            </div>
-
-            <div class="food-grid" id="foodGrid" aria-live="polite"></div>
-
-            <div class="food-menu-note">Pick your favorite treats, then fill in when and where we'll celebrate our monthsary.</div>
-          </section>
-
-          <form id="dateForm">
-            <div class="field-grid">
-              <div class="field">
-                <label for="date">Celebration Date</label>
-                <input id="date" name="date" type="date" required />
-              </div>
-              <div class="field">
-                <label for="time">Celebration Time</label>
-                <input id="time" name="time" type="time" required />
-              </div>
-              <div class="field">
-                <label for="location">Celebration Spot</label>
-                <input id="location" name="location" type="text" placeholder="Our cozy corner" required />
-              </div>
-            </div>
-            <button class="btn submit-btn" type="submit">Lock In Our Plan 💕</button>
-          </form>
-          <div class="success-message" id="successMessage">Our monthsary is locked in! Can't wait to celebrate with you! 💕</div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <div class="hearts" id="hearts" aria-hidden="true"></div>
@@ -764,121 +709,15 @@
     });
 
     // ================================================
-    // ORIGINAL MONTHSARY PAGE FUNCTIONS
+    // ORIGINAL MONTHSARY PAGE FUNCTIONS (REMOVED)
     // ================================================
+    // Food menu and date planning have been removed
+    // to simplify the page design.
 
-    const yesBtn = document.getElementById('yesBtn');
-    const noBtn = document.getElementById('noBtn');
-    const buttonRow = document.getElementById('buttonRow');
-    const modalBackdrop = document.getElementById('modalBackdrop');
-    const dateForm = document.getElementById('dateForm');
-    const successMessage = document.getElementById('successMessage');
     const hearts = document.getElementById('hearts');
-    const sparkles = document.getElementById('sparkles');
-    const foodFilterButtons = Array.from(document.querySelectorAll('.food-filter'));
-    const foodGrid = document.getElementById('foodGrid');
-
-    const menuItems = [
-      { id: 'food-1', category: 'food', title: 'Spicy Rice Cake Bowl', description: 'Warm, rich, and perfect for a cozy date.', image: 'img/FoodMeals/Fd1.jpg', alt: 'Spicy rice cake bowl with egg and sesame seeds' },
-      { id: 'food-2', category: 'food', title: 'Savory Street Noodles', description: 'A comforting plate for a slow and sweet dinner.', image: 'img/FoodMeals/Fd2.jpg', alt: 'A savory noodle dish from the food meals folder' },
-      { id: 'food-3', category: 'food', title: 'Honey Garlic Wings', description: 'Sweet, savory, and very shareable.', image: 'img/FoodMeals/Fd3.jpg', alt: 'Crispy chicken wings with fries and dipping sauce' },
-      { id: 'food-4', category: 'food', title: 'Loaded Comfort Platter', description: 'A hearty meal for the hungriest date night.', image: 'img/FoodMeals/Fd4.jpg', alt: 'A loaded meal with fries and sauce' },
-      { id: 'food-5', category: 'food', title: 'Cheesy Dinner Plate', description: 'Big flavor, cozy mood, perfect for sharing.', image: 'img/FoodMeals/Fd5.jpg', alt: 'A cheesy food meal with a rich topping' },
-      { id: 'drinks-1', category: 'drinks', title: 'Passion Lychee Fruit Teas', description: 'Fresh drinks for a cute and light date.', image: 'img/Drinks/Dr1.jpg', alt: 'Passion fruit and lychee drinks held together' },
-      { id: 'drinks-2', category: 'drinks', title: 'Sunrise Citrus Cooler', description: 'Bright and refreshing for a fun afternoon date.', image: 'img/Drinks/Dr2.jpg', alt: 'A bright citrus drink from the drinks folder' },
-      { id: 'drinks-3', category: 'drinks', title: 'Creamy Tea House Blend', description: 'Smooth, chill, and perfect for chatting.', image: 'img/Drinks/Dr3.jpg', alt: 'A creamy iced drink from the drinks folder' },
-      { id: 'drinks-4', category: 'drinks', title: 'Caramel Milk Tea Mood', description: 'Sweet and cozy like a soft conversation.', image: 'img/Drinks/Dr4.jpg', alt: 'A caramel milk tea from the drinks folder' },
-      { id: 'drinks-5', category: 'drinks', title: 'Mango Sunset Sipper', description: 'A fruity drink with a bright romantic vibe.', image: 'img/Drinks/Dr5.jpg', alt: 'A mango flavored iced drink' },
-      { id: 'drinks-6', category: 'drinks', title: 'Matcha Love Latte', description: 'Gentle and creamy for a sweet calm date.', image: 'img/Drinks/Dr6.jpg', alt: 'A matcha latte from the drinks folder' },
-      { id: 'drinks-7', category: 'drinks', title: 'Cinnamon Latte Hug', description: 'Warm spice with a soft cozy finish.', image: 'img/Drinks/Dr7.jpg', alt: 'A cinnamon latte drink from the drinks folder' },
-      { id: 'drinks-8', category: 'drinks', title: 'Blueberry Dream Chill', description: 'Cool and pretty with a gentle berry taste.', image: 'img/Drinks/Dr8.jpg', alt: 'A blueberry drink from the drinks folder' },
-      { id: 'drinks-9', category: 'drinks', title: 'Midnight Berry Refresher', description: 'Sweet, cool, and a little bit dreamy.', image: 'img/Drinks/Dr9.jpg', alt: 'A berry iced drink from the drinks folder' },
-      { id: 'drinks-10', category: 'drinks', title: 'Lemonade Date Duo', description: 'A fresh pair of drinks to keep things light.', image: 'img/Drinks/Dr10.jpg', alt: 'Two lemonade drinks from the drinks folder' },
-      { id: 'snacks-1', category: 'snacks', title: 'Loaded Chili Cheese Fries', description: 'Crispy, fun, and impossible to share unfairly.', image: 'img/Snacks/Sn1.jpg', alt: 'Loaded fries with cheese powder and dipping sauce' },
-      { id: 'snacks-2', category: 'snacks', title: 'Sweet Potato Crunch Fries', description: 'A golden snack for a playful date.', image: 'img/Snacks/Sn2.jpg', alt: 'A snack plate with fries from the snacks folder' },
-      { id: 'snacks-3', category: 'snacks', title: 'Crunchy Party Fries', description: 'Crunchy, salty, and very easy to love.', image: 'img/Snacks/Sn3.jpg', alt: 'Another fries snack from the snacks folder' },
-      { id: 'desserts-1', category: 'desserts', title: 'Classic Caramel Flan', description: 'Soft, smooth, and the sweetest finish.', image: 'img/Desserts/Ds1.jpg', alt: 'Caramel flan desserts lined up on trays' },
-      { id: 'desserts-2', category: 'desserts', title: 'Creamy Sweet Cup', description: 'A soft dessert with a dreamy finish.', image: 'img/Desserts/Ds2.jpg', alt: 'A dessert cup from the desserts folder' },
-      { id: 'desserts-3', category: 'desserts', title: 'Lotus Waffle Delight', description: 'Crispy, creamy, and made for sharing.', image: 'img/Desserts/Ds3.jpg', alt: 'A waffle dessert from the desserts folder' },
-      { id: 'desserts-4', category: 'desserts', title: 'Caramel Bliss Slice', description: 'A pretty little slice for a sweet moment.', image: 'img/Desserts/Ds4.jpg', alt: 'A caramel dessert slice from the desserts folder' },
-      { id: 'desserts-5', category: 'desserts', title: 'Mini Flan Stack', description: 'Tiny, glossy, and cute on the table.', image: 'img/Desserts/Ds5.jpg', alt: 'Mini flans from the desserts folder' },
-      { id: 'desserts-6', category: 'desserts', title: 'Berry Jelly Romance', description: 'Soft and fruity for a gentle dessert date.', image: 'img/Desserts/Ds6.jpg', alt: 'A berry dessert cup from the desserts folder' },
-      { id: 'desserts-7', category: 'desserts', title: 'Custard Dream Cups', description: 'Silky dessert vibes in a neat little cup.', image: 'img/Desserts/Ds7.jpg', alt: 'Custard dessert cups from the desserts folder' },
-      { id: 'desserts-8', category: 'desserts', title: 'Golden Sweet Puddings', description: 'Rich, golden, and the best sweet ending.', image: 'img/Desserts/Ds8.jpg', alt: 'Golden pudding desserts from the desserts folder' },
-    ];
-
-    let currentFoodFilter = 'all';
-    let selectedFoodId = null;
-    let noButtonEscaped = false;
 
     function randomBetween(min, max) {
       return Math.random() * (max - min) + min;
-    }
-
-    function moveNoButton() {
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      const buttonRect = noBtn.getBoundingClientRect();
-      const padding = 16;
-      const maxX = Math.max(padding, viewportWidth - buttonRect.width - padding);
-      const maxY = Math.max(padding, viewportHeight - buttonRect.height - padding);
-      const targetX = randomBetween(padding, maxX);
-      const targetY = randomBetween(padding, maxY);
-
-      noBtn.classList.add('is-floating');
-      noBtn.style.left = `${targetX}px`;
-      noBtn.style.top = `${targetY}px`;
-      noBtn.style.transform = `rotate(${randomBetween(-12, 12).toFixed(2)}deg)`;
-      noButtonEscaped = true;
-    }
-
-    function isCursorNearNoButton(clientX, clientY) {
-      const rect = noBtn.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      const dx = clientX - centerX;
-      const dy = clientY - centerY;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      return distance < 130;
-    }
-
-    document.addEventListener('mousemove', (event) => {
-      if (isCursorNearNoButton(event.clientX, event.clientY)) {
-        moveNoButton();
-      }
-    });
-
-    noBtn.addEventListener('mouseenter', moveNoButton);
-    noBtn.addEventListener('focus', moveNoButton);
-    noBtn.addEventListener('click', (event) => {
-      event.preventDefault();
-      moveNoButton();
-    });
-
-    yesBtn.addEventListener('click', () => {
-      modalBackdrop.classList.add('open');
-      modalBackdrop.setAttribute('aria-hidden', 'false');
-      createHeartBurst();
-      createSparkles();
-    });
-
-    function createHeartBurst() {
-      const burst = document.createElement('div');
-      burst.className = 'heart-burst';
-      const count = 16;
-      const symbols = ['💗', '💖', '💘', '❤️', '💞'];
-      for (let index = 0; index < count; index += 1) {
-        const heart = document.createElement('i');
-        heart.textContent = symbols[index % symbols.length];
-        const angle = (Math.PI * 2 * index) / count;
-        const distance = randomBetween(70, 180);
-        heart.style.setProperty('--x', `${Math.cos(angle) * distance}px`);
-        heart.style.setProperty('--y', `${Math.sin(angle) * distance}px`);
-        heart.style.animationDelay = `${index * 30}ms`;
-        burst.appendChild(heart);
-      }
-      document.body.appendChild(burst);
-      setTimeout(() => burst.remove(), 1400);
     }
 
     function createFloatingHearts() {
@@ -897,83 +736,6 @@
       }
     }
 
-    function createSparkles() {
-      sparkles.innerHTML = '';
-      const symbols = ['✦', '✧', '✦', '⋆', '✧'];
-      for (let index = 0; index < 8; index += 1) {
-        const sparkle = document.createElement('span');
-        sparkle.textContent = symbols[index % symbols.length];
-        sparkle.style.left = `${randomBetween(4, 92)}%`;
-        sparkle.style.top = `${randomBetween(8, 86)}%`;
-        sparkle.style.animationDelay = `${randomBetween(0, 1.8).toFixed(2)}s`;
-        sparkles.appendChild(sparkle);
-      }
-    }
-
-    function renderFoodMenu(filterValue) {
-      currentFoodFilter = filterValue;
-      foodFilterButtons.forEach((button) => {
-        button.classList.toggle('active', button.dataset.filter === filterValue);
-      });
-
-      const visibleItems = menuItems.filter((item) => filterValue === 'all' || item.category === filterValue);
-      foodGrid.innerHTML = visibleItems.map((item) => `
-        <button type="button" class="food-card ${item.id === selectedFoodId ? 'is-selected' : ''}" data-category="${item.category}" data-id="${item.id}">
-          <img src="${item.image}" alt="${item.alt}" />
-          <figcaption>
-            <strong>${item.title}</strong>
-            <span>${item.description}</span>
-          </figcaption>
-        </button>
-      `).join('');
-
-      Array.from(foodGrid.querySelectorAll('.food-card')).forEach((card) => {
-        card.addEventListener('click', () => {
-          selectedFoodId = card.dataset.id || null;
-          const picked = menuItems.find((item) => item.id === selectedFoodId);
-          if (picked) {
-            selectedFoodId = picked.id;
-            document.querySelector('.food-menu-note').textContent = `Selected: ${picked.title}. Tap another card or choose the date after this.`;
-          }
-          renderFoodMenu(currentFoodFilter);
-        });
-      });
-    }
-
-    foodFilterButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        selectedFoodId = null;
-        renderFoodMenu(button.dataset.filter || 'all');
-      });
-    });
-
-    dateForm.addEventListener('submit', (event) => {
-      event.preventDefault();
-      dateForm.style.display = 'none';
-      successMessage.classList.add('show');
-      createHeartBurst();
-    });
-
-    modalBackdrop.addEventListener('click', (event) => {
-      if (event.target === modalBackdrop) {
-        modalBackdrop.classList.remove('open');
-        modalBackdrop.setAttribute('aria-hidden', 'true');
-      }
-    });
-
-    window.addEventListener('resize', () => {
-      if (noButtonEscaped) {
-        const rect = noBtn.getBoundingClientRect();
-        const maxLeft = Math.max(16, window.innerWidth - rect.width - 16);
-        const maxTop = Math.max(16, window.innerHeight - rect.height - 16);
-        const left = Math.min(parseFloat(noBtn.style.left || '0'), maxLeft);
-        const top = Math.min(parseFloat(noBtn.style.top || '0'), maxTop);
-        noBtn.style.left = `${Math.max(16, left)}px`;
-        noBtn.style.top = `${Math.max(16, top)}px`;
-      }
-    });
-
-    renderFoodMenu('all');
     createFloatingHearts();
   </script>
 </body>
