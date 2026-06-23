@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Upload | Love Memories</title>
+  <style>
+    :root {
+      --bg-1: #fff2f6;
+      --bg-2: #ffd8e6;
+      --bg-3: #ffc2d6;
+      --text: #5a2436;
+      --accent: #ff4f87;
+      --accent-2: #4ecdc4;
+      --card: rgba(255, 255, 255, 0.92);
+      --shadow: 0 24px 80px rgba(70, 10, 28, 0.22);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, sans-serif;
+      color: var(--text);
+      background: linear-gradient(135deg, var(--bg-1), var(--bg-2) 55%, var(--bg-3));
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .shell {
+      width: min(960px, 100%);
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      overflow: hidden;
+    }
+
+    .hero {
+      padding: 28px;
+      background: linear-gradient(135deg, rgba(255, 95, 147, 0.12), rgba(78, 205, 196, 0.08));
+      border-bottom: 1px solid rgba(255, 79, 135, 0.12);
+    }
+
+    h1, h2, p { margin: 0; }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 8px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+      padding: 28px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.94);
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid rgba(255, 79, 135, 0.12);
+      box-shadow: 0 14px 36px rgba(191, 62, 101, 0.1);
+    }
+
+    .login, .uploader {
+      display: grid;
+      gap: 14px;
+    }
+
+    .input {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 2px solid rgba(255, 79, 135, 0.18);
+      font: inherit;
+      color: var(--text);
+      outline: none;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 12px;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary { background: linear-gradient(135deg, var(--accent), #ff3b77); }
+    .btn-secondary { background: linear-gradient(135deg, var(--accent-2), #44b8b0); }
+
+    .muted { color: rgba(90, 36, 54, 0.72); line-height: 1.6; }
+    .status { font-size: 0.95rem; }
+
+    .hidden { display: none; }
+
+    .queue {
+      display: grid;
+      gap: 10px;
+    }
+
+    .queue-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255, 245, 250, 0.88);
+      border: 1px solid rgba(255, 79, 135, 0.12);
+    }
+
+    .tag {
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 640px) {
+      .hero, .grid { padding: 20px; }
+      .actions { flex-direction: column; }
+      .btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <h1>Admin Upload</h1>
+      <p class="muted">Upload pictures and videos here, then they will show on the public memories page.</p>
+    </section>
+
+    <section class="grid">
+      <article class="card login" id="loginCard">
+        <h2>Admin Login</h2>
+        <p class="muted">Enter the admin password to unlock uploads.</p>
+        <input class="input" id="adminPassword" type="password" placeholder="Admin password" />
+        <div class="actions">
+          <button class="btn btn-primary" id="loginButton">Unlock Admin Panel</button>
+        </div>
+        <p class="status muted" id="loginStatus"></p>
+      </article>
+
+      <article class="card uploader hidden" id="uploaderCard">
+        <h2>Upload Memories</h2>
+        <p class="muted">Choose one or more photos or videos, then send them to MongoDB.</p>
+        <input class="input" id="mediaFiles" type="file" accept="image/*,video/*" multiple />
+        <div class="actions">
+          <button class="btn btn-primary" id="uploadButton">Upload Files</button>
+          <button class="btn btn-secondary" id="refreshButton">Refresh List</button>
+          <a class="btn btn-secondary" href="/" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Back to Site</a>
+        </div>
+        <p class="status muted" id="uploadStatus">Ready to upload.</p>
+      </article>
+
+      <article class="card hidden" id="queueCard">
+        <h2>Recent Uploads</h2>
+        <div class="queue" id="queue"></div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const ADMIN_PASSWORD = 'ilove1206';
+
+    const loginCard = document.getElementById('loginCard');
+    const uploaderCard = document.getElementById('uploaderCard');
+    const queueCard = document.getElementById('queueCard');
+    const adminPassword = document.getElementById('adminPassword');
+    const loginButton = document.getElementById('loginButton');
+    const loginStatus = document.getElementById('loginStatus');
+    const mediaFiles = document.getElementById('mediaFiles');
+    const uploadButton = document.getElementById('uploadButton');
+    const refreshButton = document.getElementById('refreshButton');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const queue = document.getElementById('queue');
+
+    function setStatus(node, message) {
+      node.textContent = message;
+    }
+
+    function unlockAdmin() {
+      if (adminPassword.value !== ADMIN_PASSWORD) {
+        setStatus(loginStatus, 'Wrong password. Try again.');
+        return;
+      }
+
+      loginCard.classList.add('hidden');
+      uploaderCard.classList.remove('hidden');
+      queueCard.classList.remove('hidden');
+      setStatus(uploadStatus, 'Admin panel unlocked.');
+      loadUploads();
+    }
+
+    function makeQueueItem(file) {
+      const item = document.createElement('div');
+      item.className = 'queue-item';
+
+      const left = document.createElement('div');
+      left.innerHTML = `<strong>${file.filename}</strong><br><span class="muted">${file.contentType}</span>`;
+
+      const right = document.createElement('div');
+      right.style.display = 'flex';
+      right.style.alignItems = 'center';
+      right.style.gap = '10px';
+
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.textContent = file.contentType.startsWith('video/') ? 'Video' : 'Photo';
+
+      const deleteButton = document.createElement('button');
+      deleteButton.className = 'btn btn-primary';
+      deleteButton.style.padding = '10px 14px';
+      deleteButton.textContent = 'Delete';
+      deleteButton.addEventListener('click', async () => {
+        try {
+          const response = await fetch(`/api/uploads/${file.id}`, {
+            method: 'DELETE',
+          });
+
+          if (!response.ok) {
+            throw new Error('Delete failed');
+          }
+
+          await loadUploads();
+        } catch (error) {
+          setStatus(uploadStatus, 'Could not delete that upload.');
+        }
+      });
+      right.style.gap = '10px';
+      right.appendChild(tag);
+      right.appendChild(deleteButton);
+
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.textContent = file.contentType.startsWith('video/') ? 'Video' : 'Photo';
+
+      const deleteButton = document.createElement('button');
+      deleteButton.className = 'btn btn-primary';
+      deleteButton.style.padding = '10px 14px';
+      deleteButton.textContent = 'Delete';
+      deleteButton.addEventListener('click', async () => {
+        try {
+          const response = await fetch(`/api/uploads/${file.id}`, {
+            method: 'DELETE',
+          });
+
+          if (!response.ok) {
+            throw new Error('Delete failed');
+          }
+
+          await loadUploads();
+        } catch (error) {
+          setStatus(uploadStatus, 'Could not delete that upload.');
+        }
+      });
+
+      right.appendChild(tag);
+      right.appendChild(deleteButton);
+      item.appendChild(left);
+      item.appendChild(right);
+      return item;
+    }
+
+    async function loadUploads() {
+      try {
+        const response = await fetch('/api/uploads');
+        const uploads = await response.json();
+        queue.innerHTML = '';
+
+        if (!uploads.length) {
+          queue.innerHTML = '<p class="muted">No uploads yet.</p>';
+          return;
+        }
+
+        uploads.slice(0, 10).forEach((file) => queue.appendChild(makeQueueItem(file)));
+      } catch (error) {
+        setStatus(uploadStatus, 'Failed to load uploads.');
+      }
+    }
+
+    async function uploadFiles() {
+      const files = Array.from(mediaFiles.files || []);
+
+      if (!files.length) {
+        setStatus(uploadStatus, 'Choose one or more files first.');
+        return;
+      }
+
+      const formData = new FormData();
+      files.forEach((file) => formData.append('media', file));
+
+      try {
+        uploadButton.disabled = true;
+        setStatus(uploadStatus, 'Uploading files...');
+
+        const response = await fetch('/api/uploads', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || 'Upload failed');
+        }
+
+        mediaFiles.value = '';
+        setStatus(uploadStatus, result.message || 'Upload complete.');
+        await loadUploads();
+      } catch (error) {
+        setStatus(uploadStatus, error.message || 'Upload failed.');
+      } finally {
+        uploadButton.disabled = false;
+      }
+    }
+
+    loginButton.addEventListener('click', unlockAdmin);
+    adminPassword.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        unlockAdmin();
+      }
+    });
+    uploadButton.addEventListener('click', uploadFiles);
+    refreshButton.addEventListener('click', loadUploads);
+  </script>
+</body>
+</html>

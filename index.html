@@ -321,85 +321,6 @@
     }
 
     /* Upload Section */
-    .upload-section {
-      display: grid;
-      gap: 16px;
-      margin-top: 28px;
-      padding: 20px;
-      background: linear-gradient(135deg, rgba(255, 245, 250, 0.6), rgba(255, 232, 239, 0.4));
-      border-radius: 16px;
-      border: 2px dashed rgba(255, 79, 135, 0.32);
-    }
-
-    .upload-title {
-      margin: 0;
-      font-size: 1rem;
-      font-weight: 700;
-      color: #5a2436;
-    }
-
-    .upload-form {
-      display: grid;
-      gap: 12px;
-    }
-
-    .file-input {
-      padding: 12px 16px;
-      border: 2px solid rgba(255, 79, 135, 0.24);
-      background: rgba(255, 255, 255, 0.94);
-      border-radius: 10px;
-      font: inherit;
-      font-size: 0.95rem;
-      color: #5a2436;
-      outline: none;
-    }
-
-    .upload-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .upload-btn,
-    .refresh-btn {
-      padding: 12px 20px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 200ms ease, box-shadow 200ms ease, opacity 200ms ease;
-      color: white;
-    }
-
-    .upload-btn {
-      background: linear-gradient(135deg, #ff5f93, #ff3e78);
-      box-shadow: 0 6px 16px rgba(255, 79, 135, 0.28);
-    }
-
-    .refresh-btn {
-      background: linear-gradient(135deg, #4ecdc4, #44b8b0);
-      box-shadow: 0 6px 16px rgba(78, 205, 196, 0.28);
-    }
-
-    .upload-btn:hover,
-    .refresh-btn:hover {
-      transform: translateY(-2px);
-    }
-
-    .upload-btn:disabled {
-      cursor: not-allowed;
-      opacity: 0.7;
-      transform: none;
-    }
-
-    .upload-status {
-      margin: 0;
-      font-size: 0.9rem;
-      color: rgba(90, 36, 54, 0.72);
-      text-align: center;
-      line-height: 1.5;
-    }
-
     .remove-image-btn {
       position: absolute;
       top: 8px;
@@ -449,16 +370,6 @@
       letter-spacing: 0.03em;
       text-transform: uppercase;
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-    }
-
-    @media (max-width: 720px) {
-      .upload-form {
-        gap: 10px;
-      }
-
-      .upload-actions {
-        flex-direction: column;
-      }
     }
 
     /* Timeline */
@@ -717,20 +628,6 @@
             <span>📷</span>
           </div>
         </div>
-        
-        <!-- Upload Section -->
-        <div class="upload-section">
-          <p class="upload-title">📤 Upload your memories</p>
-          <div class="upload-form">
-            <input type="file" id="mediaInput" class="file-input" accept="image/*,video/*" multiple />
-            <div class="upload-actions">
-              <button type="button" id="uploadButton" class="upload-btn">➕ Upload to Site</button>
-              <button type="button" id="refreshButton" class="refresh-btn">🔄 Refresh Memories</button>
-            </div>
-          </div>
-
-          <p class="upload-status" id="uploadStatus">Choose images or videos, then upload them to your memories wall.</p>
-        </div>
       </section>
 
       <!-- ================================================
@@ -864,15 +761,6 @@
     // GALLERY IMAGE / VIDEO MANAGEMENT
     // ================================================
     const gallery = document.getElementById('gallery');
-    const mediaInput = document.getElementById('mediaInput');
-    const uploadButton = document.getElementById('uploadButton');
-    const refreshButton = document.getElementById('refreshButton');
-    const uploadStatus = document.getElementById('uploadStatus');
-
-    function setUploadStatus(message) {
-      uploadStatus.textContent = message;
-    }
-
     function createMemoryCard(memory) {
       const galleryItem = document.createElement('div');
       galleryItem.className = 'gallery-item gallery-uploaded';
@@ -899,21 +787,11 @@
       badge.textContent = isVideo ? 'Video' : 'Photo';
       galleryItem.appendChild(badge);
 
-      const removeBtn = document.createElement('button');
-      removeBtn.className = 'remove-image-btn';
-      removeBtn.innerHTML = '✕';
-      removeBtn.addEventListener('click', async () => {
-        await deleteMemory(memory.id);
-      });
-      galleryItem.appendChild(removeBtn);
-
       return galleryItem;
     }
 
     async function loadMemories() {
       try {
-        setUploadStatus('Loading memories from MongoDB...');
-
         const response = await fetch('/api/uploads');
         if (!response.ok) {
           throw new Error('Unable to load memories');
@@ -927,76 +805,10 @@
           const placeholder = gallery.querySelector('.gallery-placeholder');
           gallery.insertBefore(createMemoryCard(memory), placeholder);
         });
-
-        if (memories.length === 0) {
-          setUploadStatus('No uploaded memories yet. Add your first photo or video below.');
-        } else {
-          setUploadStatus(`Loaded ${memories.length} ${memories.length === 1 ? 'memory' : 'memories'} from MongoDB.`);
-        }
       } catch (error) {
         console.error(error);
-        setUploadStatus('Could not load memories. Make sure the backend server is running.');
       }
     }
-
-    async function deleteMemory(memoryId) {
-      try {
-        const response = await fetch(`/api/uploads/${memoryId}`, {
-          method: 'DELETE',
-        });
-
-        if (!response.ok) {
-          throw new Error('Unable to delete memory');
-        }
-
-        await loadMemories();
-      } catch (error) {
-        console.error(error);
-        setUploadStatus('Could not delete that memory.');
-      }
-    }
-
-    async function uploadMemories() {
-      const files = Array.from(mediaInput.files || []);
-
-      if (files.length === 0) {
-        setUploadStatus('Please choose at least one image or video file first.');
-        return;
-      }
-
-      const formData = new FormData();
-      files.forEach((file) => formData.append('media', file));
-
-      try {
-        uploadButton.disabled = true;
-        refreshButton.disabled = true;
-        setUploadStatus('Uploading memories to MongoDB...');
-
-        const response = await fetch('/api/uploads', {
-          method: 'POST',
-          body: formData,
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          throw new Error(result.message || 'Upload failed');
-        }
-
-        mediaInput.value = '';
-        setUploadStatus(result.message || 'Upload complete.');
-        await loadMemories();
-      } catch (error) {
-        console.error(error);
-        setUploadStatus(error.message || 'Upload failed.');
-      } finally {
-        uploadButton.disabled = false;
-        refreshButton.disabled = false;
-      }
-    }
-
-    uploadButton.addEventListener('click', uploadMemories);
-    refreshButton.addEventListener('click', loadMemories);
 
     // ================================================
     // ORIGINAL MONTHSARY PAGE FUNCTIONS (REMOVED)

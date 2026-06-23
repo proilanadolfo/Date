@@ -82,6 +82,14 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true, database: databaseName });
 });
 
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(projectRoot, 'admin.html'));
+});
+
+app.get('/admin.html', (req, res) => {
+  res.sendFile(path.join(projectRoot, 'admin.html'));
+});
+
 app.get('/api/uploads', async (req, res) => {
   try {
     const files = await database
