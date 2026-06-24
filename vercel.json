@@ -3,6 +3,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://date-58r2.onrender.com/api/:path*"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
     }
   ]
 }

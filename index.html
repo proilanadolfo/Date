@@ -21,24 +21,32 @@
       opacity: 1;
       transition: opacity 600ms ease;
       padding: 24px;
+      overflow: hidden;
+      overscroll-behavior: none;
+      -webkit-overflow-scrolling: auto;
     }
 
-    .landing-screen.has-custom-background {
-      background-image:
-        linear-gradient(var(--bg-overlay-light), var(--bg-overlay-soft)),
-        var(--custom-background-image);
-      background-size: cover, cover;
-      background-position: center, center;
-      background-repeat: no-repeat, no-repeat;
-      background-attachment: fixed, fixed;
-    }
-
-    .landing-screen.hidden {
-      opacity: 0;
+    .landing-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
       pointer-events: none;
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+    }
+
+    .landing-screen.has-custom-background .landing-bg {
+      background-image:
+        linear-gradient(rgba(24, 8, 18, 0.14), rgba(36, 10, 26, 0.24)),
+        var(--custom-background-image);
     }
 
     .landing-container {
+      position: relative;
+      z-index: 1;
       display: grid;
       place-items: center;
       gap: 32px;
@@ -51,6 +59,11 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(2px);
       animation: slideUp 800ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+    }
+
+    .landing-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
 
     .landing-hearts {
@@ -184,24 +197,22 @@
        ============================================ */
 
     .main-content {
+      display: none;
       opacity: 0;
-      pointer-events: none;
       transition: opacity 600ms ease 400ms;
     }
 
     .main-content.show {
+      display: block;
       opacity: 1;
-      pointer-events: auto;
     }
 
-    body.has-custom-background {
-      background-image:
-        linear-gradient(var(--bg-overlay-light), var(--bg-overlay-soft)),
-        linear-gradient(135deg, var(--bg-1), var(--bg-2) 48%, var(--bg-3));
-      background-size: cover, cover;
-      background-position: center, center;
-      background-repeat: no-repeat, no-repeat;
-      background-attachment: fixed, fixed;
+    body.landing-active {
+      overflow: hidden;
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
     }
 
     /* Music player button */
@@ -634,6 +645,11 @@
     @media (max-width: 720px) {
       .landing-container {
         gap: 24px;
+        padding: clamp(24px, 5vw, 32px);
+      }
+
+      .landing-screen {
+        padding: 16px;
       }
 
       .music-btn {
@@ -647,10 +663,12 @@
   </style>
 </head>
 <body>
+  <div class="site-background" id="siteBackground" hidden aria-hidden="true"></div>
   <!-- ================================================
        LANDING SCREEN (Password Protected)
        ================================================ -->
   <div class="landing-screen" id="landingScreen">
+    <div class="landing-bg" id="landingBg" aria-hidden="true"></div>
     <div class="landing-container">
       <div class="landing-hearts" aria-hidden="true">💕 💕 💕</div>
       <h1 class="landing-heading">Happy Monthsary Love</h1>
@@ -774,6 +792,7 @@
     function openMainContent() {
       landingScreen.classList.add('hidden');
       mainContent.classList.add('show');
+      document.body.classList.remove('landing-active');
       document.body.classList.add('scrollable');
       passwordError.classList.remove('show');
       passwordInput.value = '';
@@ -783,6 +802,7 @@
     function closeMainContent() {
       landingScreen.classList.remove('hidden');
       mainContent.classList.remove('show');
+      document.body.classList.add('landing-active');
       document.body.classList.remove('scrollable');
       localStorage.removeItem(UNLOCK_STORAGE_KEY);
     }
@@ -1116,15 +1136,11 @@
 
         document.documentElement.style.setProperty('--custom-background-image', `url("${background.url}")`);
         document.body.classList.add('has-custom-background');
-        document.body.style.backgroundImage = `linear-gradient(var(--bg-overlay-light), var(--bg-overlay-soft)), url("${background.url}")`;
-        document.body.style.backgroundSize = 'cover, cover';
-        document.body.style.backgroundPosition = 'center, center';
-        document.body.style.backgroundRepeat = 'no-repeat, no-repeat';
-        document.body.style.backgroundAttachment = 'fixed, fixed';
+        landingScreen.classList.add('has-custom-background');
 
-        const landingScreen = document.getElementById('landingScreen');
-        if (landingScreen) {
-          landingScreen.classList.add('has-custom-background');
+        const siteBackground = document.getElementById('siteBackground');
+        if (siteBackground) {
+          siteBackground.hidden = false;
         }
       } catch (error) {
         console.error('Failed to load background image.', error);

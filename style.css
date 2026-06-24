@@ -40,6 +40,24 @@ body {
     linear-gradient(135deg, var(--bg-1), var(--bg-2) 48%, var(--bg-3));
 }
 
+.site-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+body.has-custom-background .site-background {
+  background-image:
+    linear-gradient(var(--bg-overlay-light), var(--bg-overlay-soft)),
+    var(--custom-background-image);
+}
+
 body::before,
 body::after {
   content: "";
