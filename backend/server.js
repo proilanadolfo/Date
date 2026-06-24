@@ -9,11 +9,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 
+dotenv.config({ path: path.join(projectRoot, '.env') });
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 const port = process.env.PORT || 3000;
-const mongoUri = process.env.MONGODB_URI;
+const mongoUri = process.env.MONGODB_URI?.trim();
 const databaseName = process.env.MONGODB_DB || 'LoveDb';
 const bucketName = 'memories';
 const backgroundSettingKey = 'backgroundImageId';
@@ -92,11 +93,28 @@ function toLoveImageResponse(file) {
 }
 
 async function connectDatabase() {
-  mongoClient = new MongoClient(mongoUri);
-  await mongoClient.connect();
-  database = mongoClient.db(databaseName);
-  bucket = new GridFSBucket(database, { bucketName });
-  console.log(`Connected to MongoDB Atlas database: ${databaseName}`);
+  const clientOptions = {
+    serverSelectionTimeoutMS: 15000,
+    connectTimeoutMS: 15000,
+    family: 4,
+    maxPoolSize: 10,
+  };
+
+  mongoClient = new MongoClient(mongoUri, clientOptions);
+
+  try {
+    await mongoClient.connect();
+    database = mongoClient.db(databaseName);
+    await database.command({ ping: 1 });
+    bucket = new GridFSBucket(database, { bucketName });
+    console.log(`Connected to MongoDB Atlas database: ${databaseName}`);
+  } catch (error) {
+    console.error('MongoDB connection failed.');
+    console.error(
+      'Verify MONGODB_URI on Render, allow 0.0.0.0/0 in Atlas Network Access, and URL-encode special characters in the database password.'
+    );
+    throw error;
+  }
 }
 
 async function uploadFile(file) {
