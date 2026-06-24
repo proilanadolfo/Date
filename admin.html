@@ -81,6 +81,53 @@
       outline: none;
     }
 
+    .textarea {
+      width: 100%;
+      min-height: 140px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 2px solid rgba(255, 79, 135, 0.18);
+      font: inherit;
+      color: var(--text);
+      outline: none;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: rgba(90, 36, 54, 0.88);
+    }
+
+    .text-form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .text-group {
+      display: grid;
+      gap: 14px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255, 79, 135, 0.1);
+    }
+
+    .text-group:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .text-group h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      color: var(--accent);
+    }
+
     .actions {
       display: flex;
       gap: 12px;
@@ -107,6 +154,21 @@
     .queue {
       display: grid;
       gap: 10px;
+    }
+
+    .preview-card {
+      display: grid;
+      gap: 12px;
+    }
+
+    .background-preview {
+      width: 100%;
+      max-height: 260px;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 79, 135, 0.12);
+      box-shadow: 0 14px 36px rgba(191, 62, 101, 0.1);
+      background: rgba(255, 245, 250, 0.88);
     }
 
     .queue-item {
@@ -142,9 +204,105 @@
     </section>
 
     <section class="grid">
+      <article class="card preview-card" id="backgroundCard">
+        <h2>Site Background</h2>
+        <p class="muted">Upload one image here to make it the public page background.</p>
+        <img class="background-preview hidden" id="backgroundPreview" alt="Current background preview" />
+        <input class="input" id="backgroundFile" type="file" accept="image/*" />
+        <div class="actions">
+          <button class="btn btn-primary" id="backgroundButton">Set Background</button>
+          <button class="btn btn-secondary" id="refreshBackgroundButton">Refresh Background</button>
+        </div>
+        <p class="status muted" id="backgroundStatus">No background selected yet.</p>
+      </article>
+
+      <article class="card preview-card" id="loveImageCard">
+        <h2>My Beautiful Love</h2>
+        <p class="muted">Upload one photo here to show in the hero section on the public page.</p>
+        <img class="background-preview hidden" id="loveImagePreview" alt="Current love image preview" />
+        <input class="input" id="loveImageFile" type="file" accept="image/*" />
+        <div class="actions">
+          <button class="btn btn-primary" id="loveImageButton">Set Love Photo</button>
+          <button class="btn btn-secondary" id="refreshLoveImageButton">Refresh Love Photo</button>
+        </div>
+        <p class="status muted" id="loveImageStatus">No love photo selected yet.</p>
+      </article>
+
+      <article class="card uploader" id="textContentCard">
+        <h2>Edit Page Text</h2>
+        <p class="muted">Update the words shown on the public monthsary page.</p>
+        <form class="text-form" id="textContentForm">
+          <div class="text-group">
+            <h3>Hero Section</h3>
+            <div class="field">
+              <label for="contentHeroBadge">Badge</label>
+              <input class="input" id="contentHeroBadge" type="text" />
+            </div>
+            <div class="field">
+              <label for="contentHeroHeading">Main Heading</label>
+              <input class="input" id="contentHeroHeading" type="text" />
+            </div>
+            <div class="field">
+              <label for="contentHeroSubtitle">Message</label>
+              <textarea class="textarea" id="contentHeroSubtitle"></textarea>
+            </div>
+            <div class="field">
+              <label for="contentHeroFooter">Footer Line</label>
+              <input class="input" id="contentHeroFooter" type="text" />
+            </div>
+            <div class="field">
+              <label for="contentLovePhotoTitle">Love Photo Title</label>
+              <input class="input" id="contentLovePhotoTitle" type="text" />
+            </div>
+            <div class="field">
+              <label for="contentLovePhotoSubtitle">Love Photo Subtitle</label>
+              <input class="input" id="contentLovePhotoSubtitle" type="text" />
+            </div>
+          </div>
+
+          <div class="text-group">
+            <h3>Love Letter</h3>
+            <div class="field">
+              <label for="contentLoveLetterTitle">Section Title</label>
+              <input class="input" id="contentLoveLetterTitle" type="text" />
+            </div>
+            <div class="field">
+              <label for="contentLoveLetterBody">Letter Message</label>
+              <textarea class="textarea" id="contentLoveLetterBody" style="min-height: 220px;"></textarea>
+            </div>
+          </div>
+
+          <div class="text-group">
+            <h3>Section Titles</h3>
+            <div class="field">
+              <label for="contentMemoriesTitle">Our Memories Title</label>
+              <input class="input" id="contentMemoriesTitle" type="text" />
+            </div>
+            <div class="field">
+              <label for="contentMemoriesSubtitle">Our Memories Subtitle</label>
+              <input class="input" id="contentMemoriesSubtitle" type="text" />
+            </div>
+            <div class="field">
+              <label for="contentJourneyTitle">Our Journey Title</label>
+              <input class="input" id="contentJourneyTitle" type="text" />
+            </div>
+            <div class="field">
+              <label for="contentJourneySubtitle">Our Journey Subtitle</label>
+              <input class="input" id="contentJourneySubtitle" type="text" />
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">Save Text</button>
+            <button class="btn btn-secondary" type="button" id="refreshTextButton">Refresh Text</button>
+          </div>
+        </form>
+        <p class="status muted" id="textContentStatus">Loading page text...</p>
+      </article>
+
       <article class="card uploader" id="uploaderCard">
         <h2>Upload Memories</h2>
-        <p class="muted">Choose one or more photos or videos, then send them to MongoDB.</p>
+        <p class="muted">Choose one or more photos or videos, then send them to MongoDB. Photos show in Our Memories. Videos show in Our Journey.</p>
         <input class="input" id="mediaFiles" type="file" accept="image/*,video/*" multiple />
         <div class="actions">
           <button class="btn btn-primary" id="uploadButton">Upload Files</button>
@@ -164,6 +322,16 @@
   <script>
     const uploaderCard = document.getElementById('uploaderCard');
     const queueCard = document.getElementById('queueCard');
+    const backgroundFile = document.getElementById('backgroundFile');
+    const backgroundButton = document.getElementById('backgroundButton');
+    const refreshBackgroundButton = document.getElementById('refreshBackgroundButton');
+    const backgroundPreview = document.getElementById('backgroundPreview');
+    const backgroundStatus = document.getElementById('backgroundStatus');
+    const loveImageFile = document.getElementById('loveImageFile');
+    const loveImageButton = document.getElementById('loveImageButton');
+    const refreshLoveImageButton = document.getElementById('refreshLoveImageButton');
+    const loveImagePreview = document.getElementById('loveImagePreview');
+    const loveImageStatus = document.getElementById('loveImageStatus');
     const mediaFiles = document.getElementById('mediaFiles');
     const uploadButton = document.getElementById('uploadButton');
     const refreshButton = document.getElementById('refreshButton');
@@ -172,6 +340,83 @@
 
     function setStatus(message) {
       uploadStatus.textContent = message;
+    }
+
+    function setBackgroundStatus(message) {
+      backgroundStatus.textContent = message;
+    }
+
+    function setLoveImageStatus(message) {
+      loveImageStatus.textContent = message;
+    }
+
+    function setBackgroundPreview(background) {
+      if (!background) {
+        backgroundPreview.classList.add('hidden');
+        backgroundPreview.removeAttribute('src');
+        return;
+      }
+
+      backgroundPreview.src = background.url;
+      backgroundPreview.classList.remove('hidden');
+      setBackgroundStatus(`Current background: ${background.filename}`);
+    }
+
+    function setLoveImagePreview(loveImage) {
+      if (!loveImage) {
+        loveImagePreview.classList.add('hidden');
+        loveImagePreview.removeAttribute('src');
+        return;
+      }
+
+      loveImagePreview.src = loveImage.url;
+      loveImagePreview.classList.remove('hidden');
+      setLoveImageStatus(`Current love photo: ${loveImage.filename}`);
+    }
+
+    async function loadBackground() {
+      try {
+        const response = await fetch('/api/background-image');
+        if (!response.ok) {
+          throw new Error('Unable to load background image');
+        }
+
+        const background = await response.json();
+        if (!background) {
+          setBackgroundStatus('No background selected yet.');
+          backgroundPreview.classList.add('hidden');
+          return;
+        }
+
+        setBackgroundPreview(background);
+      } catch (error) {
+        setBackgroundStatus('Failed to load current background.');
+      }
+    }
+
+    async function loadLoveImage() {
+      try {
+        const response = await fetch('/api/love-image');
+        if (response.status === 404) {
+          setLoveImageStatus('Love photo API not ready. Restart the server with npm start.');
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error('Unable to load love image');
+        }
+
+        const loveImage = await response.json();
+        if (!loveImage) {
+          setLoveImageStatus('No love photo selected yet.');
+          loveImagePreview.classList.add('hidden');
+          return;
+        }
+
+        setLoveImagePreview(loveImage);
+      } catch (error) {
+        setLoveImageStatus('Failed to load current love photo.');
+      }
     }
 
     function makeQueueItem(file) {
@@ -234,6 +479,80 @@
       }
     }
 
+    async function uploadBackground() {
+      const file = backgroundFile.files?.[0];
+
+      if (!file) {
+        setBackgroundStatus('Choose one image first.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('background', file);
+
+      try {
+        backgroundButton.disabled = true;
+        setBackgroundStatus('Uploading background image...');
+
+        const response = await fetch('/api/background-image', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || 'Background upload failed');
+        }
+
+        backgroundFile.value = '';
+        setBackgroundPreview(result.background);
+        setBackgroundStatus(result.message || 'Background image updated.');
+      } catch (error) {
+        setBackgroundStatus(error.message || 'Background upload failed.');
+      } finally {
+        backgroundButton.disabled = false;
+        await loadBackground();
+      }
+    }
+
+    async function uploadLoveImage() {
+      const file = loveImageFile.files?.[0];
+
+      if (!file) {
+        setLoveImageStatus('Choose one image first.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('loveImage', file);
+
+      try {
+        loveImageButton.disabled = true;
+        setLoveImageStatus('Uploading love photo...');
+
+        const response = await fetch('/api/love-image', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || 'Love photo upload failed');
+        }
+
+        loveImageFile.value = '';
+        setLoveImagePreview(result.loveImage);
+        setLoveImageStatus(result.message || 'Love photo updated.');
+      } catch (error) {
+        setLoveImageStatus(error.message || 'Love photo upload failed.');
+      } finally {
+        loveImageButton.disabled = false;
+        await loadLoveImage();
+      }
+    }
+
     async function uploadFiles() {
       const files = Array.from(mediaFiles.files || []);
 
@@ -270,9 +589,118 @@
       }
     }
 
+    const textContentForm = document.getElementById('textContentForm');
+    const refreshTextButton = document.getElementById('refreshTextButton');
+    const textContentStatus = document.getElementById('textContentStatus');
+
+    const textFields = {
+      heroBadge: document.getElementById('contentHeroBadge'),
+      heroHeading: document.getElementById('contentHeroHeading'),
+      heroSubtitle: document.getElementById('contentHeroSubtitle'),
+      heroFooter: document.getElementById('contentHeroFooter'),
+      lovePhotoTitle: document.getElementById('contentLovePhotoTitle'),
+      lovePhotoSubtitle: document.getElementById('contentLovePhotoSubtitle'),
+      loveLetterTitle: document.getElementById('contentLoveLetterTitle'),
+      loveLetterBody: document.getElementById('contentLoveLetterBody'),
+      memoriesTitle: document.getElementById('contentMemoriesTitle'),
+      memoriesSubtitle: document.getElementById('contentMemoriesSubtitle'),
+      journeyTitle: document.getElementById('contentJourneyTitle'),
+      journeySubtitle: document.getElementById('contentJourneySubtitle'),
+    };
+
+    function setTextContentStatus(message) {
+      textContentStatus.textContent = message;
+    }
+
+    function fillTextContentForm(content) {
+      textFields.heroBadge.value = content.heroBadge || '';
+      textFields.heroHeading.value = content.heroHeading || '';
+      textFields.heroSubtitle.value = content.heroSubtitle || '';
+      textFields.heroFooter.value = content.heroFooter || '';
+      textFields.lovePhotoTitle.value = content.lovePhotoTitle || '';
+      textFields.lovePhotoSubtitle.value = content.lovePhotoSubtitle || '';
+      textFields.loveLetterTitle.value = content.loveLetterTitle || '';
+      textFields.loveLetterBody.value = content.loveLetterBody || '';
+      textFields.memoriesTitle.value = content.memoriesTitle || '';
+      textFields.memoriesSubtitle.value = content.memoriesSubtitle || '';
+      textFields.journeyTitle.value = content.journeyTitle || '';
+      textFields.journeySubtitle.value = content.journeySubtitle || '';
+    }
+
+    function collectTextContentForm() {
+      return {
+        heroBadge: textFields.heroBadge.value.trim(),
+        heroHeading: textFields.heroHeading.value.trim(),
+        heroSubtitle: textFields.heroSubtitle.value.trim(),
+        heroFooter: textFields.heroFooter.value.trim(),
+        lovePhotoTitle: textFields.lovePhotoTitle.value.trim(),
+        lovePhotoSubtitle: textFields.lovePhotoSubtitle.value.trim(),
+        loveLetterTitle: textFields.loveLetterTitle.value.trim(),
+        loveLetterBody: textFields.loveLetterBody.value.trim(),
+        memoriesTitle: textFields.memoriesTitle.value.trim(),
+        memoriesSubtitle: textFields.memoriesSubtitle.value.trim(),
+        journeyTitle: textFields.journeyTitle.value.trim(),
+        journeySubtitle: textFields.journeySubtitle.value.trim(),
+      };
+    }
+
+    async function loadSiteContent() {
+      try {
+        const response = await fetch('/api/site-content');
+        if (response.status === 404) {
+          setTextContentStatus('Text API not ready. Restart the server with npm start.');
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error('Unable to load site text');
+        }
+
+        const content = await response.json();
+        fillTextContentForm(content);
+        setTextContentStatus('Page text loaded.');
+      } catch (error) {
+        setTextContentStatus('Failed to load page text.');
+      }
+    }
+
+    async function saveSiteContent(event) {
+      event.preventDefault();
+
+      try {
+        setTextContentStatus('Saving page text...');
+
+        const response = await fetch('/api/site-content', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(collectTextContentForm()),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || 'Unable to save page text');
+        }
+
+        fillTextContentForm(result.content);
+        setTextContentStatus(result.message || 'Page text saved.');
+      } catch (error) {
+        setTextContentStatus(error.message || 'Failed to save page text.');
+      }
+    }
+
     uploadButton.addEventListener('click', uploadFiles);
     refreshButton.addEventListener('click', loadUploads);
+    backgroundButton.addEventListener('click', uploadBackground);
+    refreshBackgroundButton.addEventListener('click', loadBackground);
+    loveImageButton.addEventListener('click', uploadLoveImage);
+    refreshLoveImageButton.addEventListener('click', loadLoveImage);
+    textContentForm.addEventListener('submit', saveSiteContent);
+    refreshTextButton.addEventListener('click', loadSiteContent);
     loadUploads();
+    loadBackground();
+    loadLoveImage();
+    loadSiteContent();
   </script>
 </body>
 </html>
