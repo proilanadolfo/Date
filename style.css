@@ -944,6 +944,7 @@ body.has-custom-background .landing-subtitle {
       font-size: 1.05rem;
       color: #f0e0e8;
       text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+      text-align: justify;
     }
 
     .letter-modal-close {
