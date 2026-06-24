@@ -876,3 +876,107 @@ body.has-custom-background .landing-subtitle {
   color: rgba(255, 248, 252, 0.92);
   text-shadow: 0 1px 10px rgba(0, 0, 0, 0.5);
 }
+
+/* Love Letter */
+    .love-letter-content {
+      padding: 24px;
+    }
+
+    .love-letter-trigger {
+      display: block;
+      margin: 24px auto 0;
+      padding: 12px 28px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255, 95, 147, 0.92), rgba(255, 62, 120, 0.92));
+      color: white;
+      font: inherit;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 14px 28px rgba(229, 58, 116, 0.24);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .love-letter-trigger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 34px rgba(229, 58, 116, 0.32);
+    }
+
+    .love-letter-trigger:active {
+      transform: translateY(1px);
+    }
+
+    .letter-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 150;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(16, 6, 12, 0.86);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 240ms ease;
+    }
+
+    .letter-modal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .letter-modal-content {
+      position: relative;
+      width: 100%;
+      max-width: 640px;
+      max-height: calc(100vh - 80px);
+      padding: clamp(28px, 5vw, 48px);
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 245, 250, 0.08));
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      overflow-y: auto;
+      line-height: 1.9;
+      font-size: 1.05rem;
+      color: #f0e0e8;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    }
+
+    .letter-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 40px;
+      height: 40px;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.16);
+      color: white;
+      font-size: 1.6rem;
+      line-height: 1;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: transform 180ms ease, background 180ms ease;
+    }
+
+    .letter-modal-close:hover {
+      transform: scale(1.05);
+      background: rgba(255, 79, 135, 0.85);
+    }
+
+    body.letter-modal-open {
+      overflow: hidden;
+    }
+
+    /* Gallery */
+    .gallery-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

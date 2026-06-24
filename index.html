@@ -732,13 +732,7 @@
            ================================================ -->
       <section class="section" aria-label="Love letter">
         <h2 class="section-title" id="loveLetterTitle">💌 A Letter To You</h2>
-        <div class="love-letter-content" id="loveLetter">
-          <p>My dearest,<br><br>
-          Every day with you feels like a dream I never want to wake up from. Even though distance separates us, my heart is always close to yours. Thank you for being my reason to smile, my comfort in hard times, and my greatest joy.<br><br>
-          I promise to love you more with each passing day, to be there for you through everything, and to make this distance nothing but a temporary bump in our beautiful love story.<br><br>
-          Forever yours,<br>
-          Your Love 💕</p>
-        </div>
+        <button type="button" class="love-letter-trigger" id="loveLetterTrigger">Read My Letter</button>
       </section>
 
       <!-- ================================================
@@ -765,6 +759,13 @@
     </div>
 
 
+  </div>
+
+  <div class="letter-modal" id="letterModal" hidden>
+    <div class="letter-modal-content">
+      <button class="letter-modal-close" id="letterModalClose" type="button" aria-label="Close letter">×</button>
+      <div id="loveLetter"></div>
+    </div>
   </div>
 
   <div class="gallery-viewer" id="galleryViewer" hidden>
@@ -855,6 +856,9 @@
     const galleryViewer = document.getElementById('galleryViewer');
     const galleryViewerContent = document.getElementById('galleryViewerContent');
     const galleryViewerClose = document.getElementById('galleryViewerClose');
+    const letterModal = document.getElementById('letterModal');
+    const letterTrigger = document.getElementById('loveLetterTrigger');
+    const letterModalClose = document.getElementById('letterModalClose');
 
     function openGalleryViewer(memory) {
       galleryViewerContent.innerHTML = '';
@@ -864,10 +868,13 @@
         const video = document.createElement('video');
         video.src = memory.url;
         video.controls = true;
-        video.autoplay = true;
         video.playsInline = true;
-        video.muted = false; // Ensure video is not muted in the viewer
+        video.muted = false;
         galleryViewerContent.appendChild(video);
+        video.play().catch(error => {
+          console.error("Video play failed:", error);
+          // Autoplay was prevented. The user will need to press play on the controls.
+        });
       } else {
         const img = document.createElement('img');
         img.src = memory.url;
@@ -889,6 +896,28 @@
         galleryViewerContent.innerHTML = '';
       }, 240);
     }
+
+    function openLetterModal() {
+      letterModal.hidden = false;
+      document.body.classList.add('letter-modal-open');
+      requestAnimationFrame(() => letterModal.classList.add('open'));
+    }
+
+    function closeLetterModal() {
+      letterModal.classList.remove('open');
+      document.body.classList.remove('letter-modal-open');
+      window.setTimeout(() => {
+        letterModal.hidden = true;
+      }, 240);
+    }
+
+    letterTrigger.addEventListener('click', openLetterModal);
+    letterModalClose.addEventListener('click', closeLetterModal);
+    letterModal.addEventListener('click', (event) => {
+      if (event.target === letterModal) {
+        closeLetterModal();
+      }
+    });
 
     galleryViewer.addEventListener('click', (event) => {
       if (event.target === galleryViewer) {
