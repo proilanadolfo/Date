@@ -866,6 +866,7 @@
         video.controls = true;
         video.autoplay = true;
         video.playsInline = true;
+        video.muted = false; // Ensure video is not muted in the viewer
         galleryViewerContent.appendChild(video);
       } else {
         const img = document.createElement('img');

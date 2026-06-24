@@ -555,6 +555,28 @@ app.put('/api/site-content', async (req, res) => {
   }
 });
 
+app.delete('/api/delete-blob', async (req, res) => {
+  const { blobName } = req.query;
+  if (!blobName) {
+    return res.status(400).json({ message: 'Blob name is required.' });
+  }
+
+  try {
+    const filesCollection = database.collection(`${bucketName}.files`);
+    const file = await filesCollection.findOne({ filename: blobName });
+
+    if (!file) {
+      return res.status(404).json({ message: 'File not found.' });
+    }
+
+    await bucket.delete(file._id);
+    res.status(200).json({ message: `Blob "${blobName}" deleted successfully.` });
+  } catch (error) {
+    console.error('Failed to delete blob:', error);
+    res.status(500).json({ message: 'Failed to delete blob.' });
+  }
+});
+
 async function startServer() {
   await connectDatabase();
 

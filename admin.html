@@ -439,21 +439,7 @@
       deleteButton.className = 'btn btn-primary';
       deleteButton.style.padding = '10px 14px';
       deleteButton.textContent = 'Delete';
-      deleteButton.addEventListener('click', async () => {
-        try {
-          const response = await fetch(`/api/uploads/${file.id}`, {
-            method: 'DELETE',
-          });
-
-          if (!response.ok) {
-            throw new Error('Delete failed');
-          }
-
-          await loadUploads();
-        } catch (error) {
-          setStatus('Could not delete that upload.');
-        }
-      });
+      deleteButton.addEventListener('click', () => deleteBlob(file.url));
 
       right.appendChild(tag);
       right.appendChild(deleteButton);
@@ -461,6 +447,25 @@
       item.appendChild(right);
       return item;
     }
+
+    async function deleteBlob(url) {
+        const blobName = url.split('/').pop();
+        try {
+          const response = await fetch(`/api/delete-blob?blobName=${encodeURIComponent(blobName)}`, {
+            method: 'DELETE',
+          });
+          const result = await response.json();
+          if (response.ok) {
+            alert(result.message);
+            listBlobs(); // Refresh the list
+          } else {
+            throw new Error(result.message || 'Failed to delete blob');
+          }
+        } catch (error) {
+          console.error('Error deleting blob:', error);
+          alert(`Error deleting blob: ${error.message}`);
+        }
+      }
 
     async function loadUploads() {
       try {
