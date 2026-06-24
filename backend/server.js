@@ -4,6 +4,7 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { MongoClient, ObjectId, GridFSBucket } from 'mongodb';
+import bcrypt from 'bcrypt';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,7 +21,9 @@ const bucketName = 'memories';
 const backgroundSettingKey = 'backgroundImageId';
 const loveImageSettingKey = 'loveImageId';
 const siteContentSettingKey = 'siteContent';
+const adminPasswordKey = 'adminPassword';
 const settingsCollectionName = 'site-settings';
+const saltRounds = 10;
 
 const DEFAULT_SITE_CONTENT = {
   heroBadge: '🌹 Our Special Month 🌹',
@@ -553,26 +556,101 @@ app.put('/api/site-content', async (req, res) => {
     console.error('Failed to update site content:', error);
     res.status(500).json({ message: 'Unable to update site content.' });
   }
-});
+});post('/api/login', async (req, res) => {
+  const { password } = req.body;
 
-app.delete('/api/delete-blob', async (req, res) => {
-  const { blobName } = req.query;
-  if (!blobName) {
-    return res.status(400).json({ message: 'Blob name is required.' });
+  if (!password) {
+    return res.status(400).json({ message: 'Password is required.' });
   }
 
   try {
-    const filesCollection = database.collection(`${bucketName}.files`);
-    const file = await filesCollection.findOne({ filename: blobName });
+    const passwordSetting = await database.collection(settingsCollectionName).findOne({ key: adminPasswordKey });
 
+    if (!passwordSetting || !passwordSetting.value) {
+      // If no password is set, deny access but maybe guide for setup.
+      return res.status(401).json({ message: 'Admin password not set.' });
+    }
+
+    const match = await bcrypt.compare(password, passwordSetting.value);
+
+    if (match) {
+      // In a real app, you'd issue a token (e.g., JWT) here.
+      res.json({ message: 'Login successful.' });
+    } else {
+      res.status(401).json({ message: 'Invalid password.' });
+    }
+  } catch (error) {
+    console.error('Login failed:', error);
+    res.status(500).json({ message: 'An error occurred during login.' });
+  }
+});
+
+app.put('/api/password', async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!newPassword) {
+    return res.status(400).json({ message: 'New password is required.' });
+  }
+
+  try {
+    const passwordSetting = await database.collection(settingsCollectionName).findOne({ key: adminPasswordKey });
+
+    // If a password is already set, the current password must match
+    if (passwordSetting && passwordSetting.value) {
+      if (!currentPassword) {
+        return res.status(400).json({ message: 'Current password is required.' });
+      }
+      const match = await bcrypt.compare(currentPassword, passwordSetting.value);
+      if (!match) {
+        return res.status(401).json({ message: 'Invalid current password.' });
+      }
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    await database.collection(settingsCollectionName).updateOne(
+      { key: adminPasswordKey },
+      { $set: { key: adminPasswordKey, value: hashedNewPassword, updatedAt: new Date() } },
+      { upsert: true }
+    );
+
+    res.json({ message: 'Password updated successfully.' });
+  } catch (error) {
+    console.error('Failed to update password:', error);
+    res.status(500).json({ message: 'Unable to update password.' });
+  }
+});
+
+app.
+
+app.delete('/api/delete-blob', async (req, res) => {
+  const { url } = req.query;
+
+  if (!url) {
+    return res.status(400).json({ message: 'Blob URL is required.' });
+  }
+
+  try {
+    // Extract the file ID from the URL, which is the second to last part
+    const parts = url.split('/');
+    const fileIdString = parts.length > 1 ? parts[parts.length - 2] : null;
+
+    if (!fileIdString || !ObjectId.isValid(fileIdString)) {
+      return res.status(400).json({ message: 'Invalid blob URL format.' });
+    }
+
+    const fileId = new ObjectId(fileIdString);
+
+    // Check if the file exists before attempting to delete
+    const file = await database.collection(`${bucketName}.files`).findOne({ _id: fileId });
     if (!file) {
       return res.status(404).json({ message: 'File not found.' });
     }
 
-    await bucket.delete(file._id);
-    res.status(200).json({ message: `Blob "${blobName}" deleted successfully.` });
+    await bucket.delete(fileId);
+    res.json({ message: 'Blob deleted successfully.' });
   } catch (error) {
-    console.error('Failed to delete blob:', error);
+    console.error('Error deleting blob:', error);
     res.status(500).json({ message: 'Failed to delete blob.' });
   }
 });

@@ -449,23 +449,22 @@
     }
 
     async function deleteBlob(url) {
-        const blobName = url.split('/').pop();
-        try {
-          const response = await fetch(`/api/delete-blob?blobName=${encodeURIComponent(blobName)}`, {
-            method: 'DELETE',
-          });
-          const result = await response.json();
-          if (response.ok) {
-            alert(result.message);
-            listBlobs(); // Refresh the list
-          } else {
-            throw new Error(result.message || 'Failed to delete blob');
-          }
-        } catch (error) {
-          console.error('Error deleting blob:', error);
-          alert(`Error deleting blob: ${error.message}`);
+      try {
+        const response = await fetch(`/api/delete-blob?url=${encodeURIComponent(url)}`, {
+          method: 'DELETE',
+        });
+        const result = await response.json();
+        if (response.ok) {
+          alert(result.message);
+          loadUploads(); // Refresh the list
+        } else {
+          throw new Error(result.message || 'Failed to delete blob');
         }
+      } catch (error) {
+        console.error('Error deleting blob:', error);
+        alert(`Error deleting blob: ${error.message}`);
       }
+    }
 
     async function loadUploads() {
       try {
