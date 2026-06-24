@@ -768,6 +768,13 @@
     </div>
   </div>
 
+  <div class="gallery-all-modal" id="galleryAllModal" hidden>
+    <div class="gallery-all-modal-content">
+      <button class="gallery-all-modal-close" id="galleryAllModalClose" type="button" aria-label="Close gallery">×</button>
+      <div class="gallery-all-grid" id="galleryAllGrid"></div>
+    </div>
+  </div>
+
   <div class="gallery-viewer" id="galleryViewer" hidden>
     <button class="gallery-viewer-close" id="galleryViewerClose" type="button" aria-label="Close preview">×</button>
     <div class="gallery-viewer-content" id="galleryViewerContent"></div>
@@ -859,6 +866,9 @@
     const letterModal = document.getElementById('letterModal');
     const letterTrigger = document.getElementById('loveLetterTrigger');
     const letterModalClose = document.getElementById('letterModalClose');
+    const galleryAllModal = document.getElementById('galleryAllModal');
+    const galleryAllGrid = document.getElementById('galleryAllGrid');
+    const galleryAllModalClose = document.getElementById('galleryAllModalClose');
 
     function openGalleryViewer(memory) {
       galleryViewerContent.innerHTML = '';
@@ -911,11 +921,26 @@
       }, 240);
     }
 
+    function openGalleryAllModal() {
+      galleryAllModal.hidden = false;
+      document.body.classList.add('gallery-all-modal-open');
+      requestAnimationFrame(() => galleryAllModal.classList.add('open'));
+    }
+
+    function closeGalleryAllModal() {
+      galleryAllModal.classList.remove('open');
+      document.body.classList.remove('gallery-all-modal-open');
+      window.setTimeout(() => {
+        galleryAllModal.hidden = true;
+      }, 240);
+    }
+
     letterTrigger.addEventListener('click', openLetterModal);
     letterModalClose.addEventListener('click', closeLetterModal);
-    letterModal.addEventListener('click', (event) => {
-      if (event.target === letterModal) {
-        closeLetterModal();
+    galleryAllModalClose.addEventListener('click', closeGalleryAllModal);
+    galleryAllModal.addEventListener('click', (event) => {
+      if (event.target === galleryAllModal) {
+        closeGalleryAllModal();
       }
     });
 
@@ -979,12 +1004,12 @@
 
     let galleryExpanded = false;
     let galleryPhotoCount = 0;
+    let allPhotos = [];
 
     function updateGalleryViewAll() {
       const limit = getGalleryPreviewLimit();
 
-      if (galleryExpanded || galleryPhotoCount <= limit) {
-        gallery.classList.remove('is-collapsed');
+      if (galleryPhotoCount <= limit) {
         galleryViewAll.hidden = true;
         return;
       }
@@ -995,19 +1020,20 @@
     }
 
     galleryViewAll.addEventListener('click', () => {
-      galleryExpanded = true;
-      updateGalleryViewAll();
+      galleryAllGrid.innerHTML = '';
+      allPhotos.forEach(photo => {
+        galleryAllGrid.appendChild(createMemoryCard(photo));
+      });
+      openGalleryAllModal();
     });
 
     window.addEventListener('resize', () => {
-      if (!galleryExpanded) {
-        updateGalleryViewAll();
-      }
+      updateGalleryViewAll();
     });
 
     function renderGalleryEmptyState() {
-      galleryExpanded = false;
       galleryPhotoCount = 0;
+      allPhotos = [];
       galleryViewAll.hidden = true;
       gallery.classList.remove('is-collapsed');
       gallery.innerHTML = `
@@ -1034,13 +1060,13 @@
         }
 
         const photos = memories.filter((memory) => !memory.contentType?.startsWith('video/'));
+        allPhotos = photos;
 
         if (!photos.length) {
           renderGalleryEmptyState();
           return;
         }
 
-        galleryExpanded = false;
         galleryPhotoCount = photos.length;
 
         photos.forEach((memory) => {
