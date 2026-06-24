@@ -204,6 +204,25 @@
     </section>
 
     <section class="grid">
+      <article class="card" id="passwordCard">
+        <h2>Admin Password</h2>
+        <p class="muted">Set or update the password for accessing this admin page.</p>
+        <form class="text-form" id="passwordForm">
+          <div class="field">
+            <label for="currentPassword">Current Password (leave blank if setting for the first time)</label>
+            <input class="input" id="currentPassword" type="password" />
+          </div>
+          <div class="field">
+            <label for="newPassword">New Password</label>
+            <input class="input" id="newPassword" type="password" />
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary" type="submit">Update Password</button>
+          </div>
+        </form>
+        <p class="status muted" id="passwordStatus"></p>
+      </article>
+
       <article class="card preview-card" id="backgroundCard">
         <h2>Site Background</h2>
         <p class="muted">Upload one image here to make it the public page background.</p>
@@ -337,6 +356,11 @@
     const refreshButton = document.getElementById('refreshButton');
     const uploadStatus = document.getElementById('uploadStatus');
     const queue = document.getElementById('queue');
+
+    const passwordForm = document.getElementById('passwordForm');
+    const currentPasswordInput = document.getElementById('currentPassword');
+    const newPasswordInput = document.getElementById('newPassword');
+    const passwordStatus = document.getElementById('passwordStatus');
 
     function setStatus(message) {
       uploadStatus.textContent = message;
@@ -693,6 +717,38 @@
       }
     }
 
+    async function updatePassword(event) {
+      event.preventDefault();
+      const currentPassword = currentPasswordInput.value;
+      const newPassword = newPasswordInput.value;
+
+      if (!newPassword) {
+        passwordStatus.textContent = 'Please enter a new password.';
+        return;
+      }
+
+      try {
+        passwordStatus.textContent = 'Updating password...';
+        const response = await fetch('/api/password', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ currentPassword, newPassword }),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || 'Failed to update password.');
+        }
+
+        passwordStatus.textContent = result.message;
+        currentPasswordInput.value = '';
+        newPasswordInput.value = '';
+      } catch (error) {
+        passwordStatus.textContent = error.message || 'An error occurred.';
+      }
+    }
+
     uploadButton.addEventListener('click', uploadFiles);
     refreshButton.addEventListener('click', loadUploads);
     backgroundButton.addEventListener('click', uploadBackground);
@@ -701,6 +757,8 @@
     refreshLoveImageButton.addEventListener('click', loadLoveImage);
     textContentForm.addEventListener('submit', saveSiteContent);
     refreshTextButton.addEventListener('click', loadSiteContent);
+    passwordForm.addEventListener('submit', updatePassword);
+
     loadUploads();
     loadBackground();
     loadLoveImage();

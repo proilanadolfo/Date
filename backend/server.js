@@ -556,7 +556,9 @@ app.put('/api/site-content', async (req, res) => {
     console.error('Failed to update site content:', error);
     res.status(500).json({ message: 'Unable to update site content.' });
   }
-});post('/api/login', async (req, res) => {
+});
+
+app.post('/api/login', async (req, res) => {
   const { password } = req.body;
 
   if (!password) {
@@ -620,8 +622,6 @@ app.put('/api/password', async (req, res) => {
     res.status(500).json({ message: 'Unable to update password.' });
   }
 });
-
-app.
 
 app.delete('/api/delete-blob', async (req, res) => {
   const { url } = req.query;
